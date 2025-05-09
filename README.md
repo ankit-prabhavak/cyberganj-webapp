@@ -1,6 +1,5 @@
 # CyberGanj
 
-![CyberGanj Logo](logo.png)
 
 ## Overview
 
