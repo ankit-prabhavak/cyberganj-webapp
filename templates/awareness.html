@@ -1,0 +1,661 @@
+{% extends "base.html" %}
+
+{% block title %}CyberGanj - Digital Awareness & Cyber Safety{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: linear-gradient(rgba(44, 62, 80, 0.9), rgba(44, 62, 80, 0.9));
+        color: white;
+        padding: 3rem 0;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .hero-content h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .hero-content p {
+        font-size: 1.2rem;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .section {
+        padding: 3rem 0;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: var(--space-xl);
+        position: relative;
+        padding-bottom: var(--space-md);
+        border: none;
+        box-shadow: none;
+    }
+
+    .section-title h2 {
+        font-size: 2rem;
+        color: #4a154b;
+        position: relative;
+        padding-bottom: 0.5rem;
+        margin-bottom: 0;
+        border-bottom: none;
+        box-shadow: none;
+    }
+
+    /* Removed the ::after pseudo-element to eliminate the line */
+    .section-title h2::after {
+        display: none;
+    }
+
+    /* Explicitly ensure no ::before pseudo-element exists */
+    .section-title h2::before {
+        display: none;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .info-card {
+        background-color: #ffffff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .info-card-header {
+        background: var(--secondary-color);
+        color: white;
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .info-card-header i {
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .info-card-body {
+        padding: 1.5rem;
+    }
+
+    .info-card-body h3, .info-card-body h4 {
+        margin-top: 0;
+        color: #4a154b;
+    }
+
+    .info-card-body ul {
+        padding-left: 1.2rem;
+        margin-bottom: 0;
+    }
+
+    .info-card-body ul li {
+        margin-bottom: 0.5rem;
+    }
+    
+    .resources-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .resource-item {
+        background-color: #ffffff;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+    }
+
+    .resource-item:hover {
+        transform: translateY(-5px);
+    }
+
+    .resource-item h3 {
+        color: #4a154b;
+        margin-top: 0;
+    }
+
+    .resource-item p {
+        margin-bottom: 1rem;
+    }
+
+    .resource-link {
+        color: #00b8d4;
+        text-decoration: none;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .resource-link::after {
+        content: "→";
+        margin-left: 0.5rem;
+        transition: transform 0.3s;
+    }
+
+    .resource-link:hover::after {
+        transform: translateX(4px);
+    }
+    
+    .faq-section {
+    padding: 60px 0;
+    background-color: #e0e0e0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.section-title h2 {
+    font-size: 2.5rem;
+    color: #333;
+    font-weight: 700;
+}
+
+.faq-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.faq-item {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.faq-toggle {
+    display: none;
+}
+
+.faq-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    transition: background 0.3s;
+}
+
+.faq-question:hover {
+    background: #f1f1f1;
+}
+
+.faq-question i {
+    transition: transform 0.3s;
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    padding: 0 20px;
+}
+
+.faq-answer p {
+    margin: 0;
+    padding: 20px 0;
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.6;
+}
+
+.faq-toggle:checked + .faq-question + .faq-answer {
+    max-height: 200px; /* Adjust based on content */
+}
+
+.faq-toggle:checked + .faq-question i {
+    transform: rotate(180deg);
+}
+
+@media (max-width: 768px) {
+    .section-title h2 {
+        font-size: 2rem;
+    }
+
+    .faq-question {
+        font-size: 1rem;
+    }
+
+    .faq-answer p {
+        font-size: 0.9rem;
+    }
+}
+
+    .alternate-bg {
+        background-color: #eee;
+    }
+
+    @media (max-width: 768px) {
+        .hero-content h1 {
+            font-size: 2rem;
+        }
+        
+        .hero-content p {
+            font-size: 1rem;
+        }
+        
+        .section {
+            padding: 2rem 0;
+        }
+        
+        .section-title h2 {
+            font-size: 1.8rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Digital Awareness & Cyber Safety</h1>
+            <p>Empowering you with knowledge to navigate the digital world safely and responsibly</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-title">
+            <h2>Understanding Digital Threats</h2>
+        </div>
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="fas fa-lock"></i>
+                    <h3>Phishing Attacks</h3>
+                </div>
+                <div class="info-card-body">
+                    <p>Phishing attacks use deceptive emails, messages, or websites to trick users into revealing sensitive information like passwords or financial details.</p>
+                    <h4>How to Stay Safe:</h4>
+                    <ul>
+                        <li>Verify sender email addresses carefully</li>
+                        <li>Don't click on suspicious links</li>
+                        <li>Never share sensitive information via email</li>
+                        <li>Use email filtering services</li>
+                        <li>Check for HTTPS before entering credentials</li>
+                    </ul>
+                    <a href="{{ url_for('phishing_attacks') }}#phishing_attacks" class="article-link">Read More</a>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Malware Protection</h3>
+                </div>
+                <div class="info-card-body">
+                    <p>Malware can compromise your devices, steal personal data, and even hold your files hostage through ransomware attacks.</p>
+                    <h4>How to Stay Safe:</h4>
+                    <ul>
+                        <li>Keep operating systems and software updated</li>
+                        <li>Use reputable antivirus software</li>
+                        <li>Be cautious of downloaded files</li>
+                        <li>Back up important data regularly</li>
+                        <li>Use ad-blockers to prevent malvertising</li>
+                    </ul>
+                    <a href="{{ url_for('malware') }}#malware_protection" class="article-link">Read More</a>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="fas fa-key"></i>
+                    <h3>Password Security</h3>
+                </div>
+                <div class="info-card-body">
+                    <p>Weak passwords are a common entry point for cyber attacks. Strong password practices are essential for digital security.</p>
+                    <h4>How to Stay Safe:</h4>
+                    <ul>
+                        <li>Use unique passwords for each account</li>
+                        <li>Create complex passwords (12+ characters)</li>
+                        <li>Enable two-factor authentication (2FA)</li>
+                        <li>Use a password manager</li>
+                        <li>Change passwords regularly</li>
+                    </ul>
+                    <a href="{{ url_for('password') }}#password_security" class="article-link">Read More</a>
+                </div>
+            </div>
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="fas fa-user-secret"></i>
+                    <h3>Social Engineering</h3>
+                </div>
+                <div class="info-card-body">
+                    <p>Social engineering tricks people into giving away private info or access by exploiting trust and emotions.</p>
+                    <h4>How to Stay Safe:</h4>
+                    <ul>
+                        <li>Verify identities</li>
+                        <li>Don't overshare</li>
+                        <li>Question unusual requests</li>
+                        <li>Stay informed</li>
+                        <li>Trust your instincts</li>
+                    </ul>
+                    <a href="{{ url_for('awareness') }}#social_engineering" class="article-link">Read More</a>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="fas fa-wifi"></i>
+                    <h3>Public Wi-Fi Risks</h3>
+                </div>
+                <div class="info-card-body">
+                    <p>Free Wi-Fi in public places can be unsafe, exposing your data to hackers and snoopers.</p>
+                    <h4>How to Stay Safe:</h4>
+                    <ul>
+                        <li>Avoid logging in to sensitive accounts</li>
+                        <li>Use a VPN</li>
+                        <li>Turn off sharing</li>
+                        <li>Stick to HTTPS sites</li>
+                        <li>Forget networks after use</li>
+                    </ul>
+                    <a href="{{ url_for('awareness') }}#public_wifi" class="article-link">Read More</a>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="fas fa-database"></i>
+                    <h3>Data Breaches</h3>
+                </div>
+                <div class="info-card-body">
+                    <p>Data breaches expose personal info when companies or systems are hacked or misconfigured.</p>
+                    <h4>How to Stay Safe:</h4>
+                    <ul>
+                        <li>Use strong, unique passwords</li>
+                        <li>Enable 2FA</li>
+                        <li>Monitor your accounts</li>
+                        <li>Update software regularly</li>
+                        <li>Limit data sharing</li>
+                    </ul>
+                    <a href="{{ url_for('awareness') }}#data_breaches" class="article-link">Read More</a>
+                </div>
+            </div>
+            
+            
+            
+        </div>
+    </div>
+</section>
+
+<section class="section alternate-bg">
+    <div class="container">
+        <div class="section-title">
+            <h2>Digital Wellness & Balance</h2>
+        </div>
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="fas fa-clock"></i>
+                    <h3>Screen Time Management</h3>
+                </div>
+                <div class="info-card-body">
+                    <p>Excessive screen time can impact your physical and mental health. Finding balance is key to digital wellness.</p>
+                    <h4>Healthy Practices:</h4>
+                    <ul>
+                        <li>Set daily screen time limits</li>
+                        <li>Use screen time monitoring apps</li>
+                        <li>Take regular breaks (20-20-20 rule)</li>
+                        <li>Create tech-free zones at home</li>
+                        <li>Disconnect before bedtime</li>
+                    </ul>
+                    <a href="{{ url_for('awareness') }}#screen_time_management" class="article-link">Read More</a>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="fas fa-brain"></i>
+                    <h3>Mental Health Online</h3>
+                </div>
+                <div class="info-card-body">
+                    <p>Social media and digital content can affect your mental health. Being aware of these impacts is the first step to managing them.</p>
+                    <h4>Healthy Practices:</h4>
+                    <ul>
+                        <li>Curate a positive feed</li>
+                        <li>Be mindful of comparison traps</li>
+                        <li>Practice digital detox regularly</li>
+                        <li>Set boundaries for social media use</li>
+                        <li>Seek support if experiencing cyberbullying</li>
+                    </ul>
+                    <a href="{{ url_for('awareness') }}#mental_health_online" class="article-link">Read More</a>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="fas fa-search"></i>
+                    <h3>Information Literacy</h3>
+                </div>
+                <div class="info-card-body">
+                    <p>In the age of misinformation, knowing how to evaluate online content and identify fake news is crucial.</p>
+                    <h4>Healthy Practices:</h4>
+                    <ul>
+                        <li>Check sources before sharing content</li>
+                        <li>Verify information across multiple sources</li>
+                        <li>Be wary of emotional headlines</li>
+                        <li>Look for publication dates</li>
+                        <li>Recognize sponsored content</li>
+                    </ul>
+                    <a href="{{ url_for('awareness') }}#information_literacy" class="article-link">Read More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-title">
+            <h2>Online Privacy Protection</h2>
+        </div>
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="fas fa-user-shield"></i>
+                    <h3>Digital Footprint</h3>
+                </div>
+                <div class="info-card-body">
+                    <p>Every action online leaves a trace. Understanding your digital footprint can help you manage your online presence.</p>
+                    <h4>Privacy Tips:</h4>
+                    <ul>
+                        <li>Regularly audit your online accounts</li>
+                        <li>Search for yourself online</li>
+                        <li>Adjust privacy settings on all platforms</li>
+                        <li>Be cautious about personal information sharing</li>
+                        <li>Consider using privacy-focused services</li>
+                    </ul>
+                    <a href="{{ url_for('awareness') }}#digital_footprint" class="article-link">Read More</a>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="fas fa-globe"></i>
+                    <h3>Secure Browsing</h3>
+                </div>
+                <div class="info-card-body">
+                    <p>Your browsing habits can expose personal data. Taking steps to browse securely can enhance your privacy.</p>
+                    <h4>Privacy Tips:</h4>
+                    <ul>
+                        <li>Use a VPN for sensitive activities</li>
+                        <li>Browse in private/incognito mode</li>
+                        <li>Clear cookies and browsing history regularly</li>
+                        <li>Use privacy-focused browsers</li>
+                        <li>Install privacy protection extensions</li>
+                    </ul>
+                    <a href="{{ url_for('awareness') }}#secure_browsing" class="article-link">Read More</a>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="fas fa-mobile-alt"></i>
+                    <h3>Mobile Device Security</h3>
+                </div>
+                <div class="info-card-body">
+                    <p>Smartphones contain a wealth of personal data. Securing these devices is essential for privacy.</p>
+                    <h4>Privacy Tips:</h4>
+                    <ul>
+                        <li>Use strong passcodes or biometrics</li>
+                        <li>Review app permissions regularly</li>
+                        <li>Turn off location services when not needed</li>
+                        <li>Keep apps and OS updated</li>
+                        <li>Use remote wipe capabilities</li>
+                    </ul>
+                    <a href="{{ url_for('awareness') }}#mobile_device_security" class="article-link">Read More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="section">
+    <div class="container">
+        <div class="section-title">
+            <h2>Educational Resources</h2>
+        </div>
+        <div class="resources-list">
+            <div class="resource-item">
+                <h3>Beginner's Guide to Cybersecurity</h3>
+                <p>A comprehensive introduction to the basics of online security, privacy, and digital wellness.</p>
+                <a href="{{ url_for('resources') }}#beginners-guide" class="resource-link">Access Guide</a>
+            </div>
+            <div class="resource-item">
+                <h3>Family Online Safety Toolkit</h3>
+                <p>Resources for parents and guardians to help children navigate the digital world safely.</p>
+                <a href="{{ url_for('resources') }}#family-toolkit" class="resource-link">Access Toolkit</a>
+            </div>
+            <div class="resource-item">
+                <h3>Digital Security Checklist</h3>
+                <p>A practical step-by-step guide to securing your digital life and protecting your privacy.</p>
+                <a href="{{ url_for('resources') }}#security-checklist" class="resource-link">Download Checklist</a>
+            </div>
+            <div class="resource-item">
+                <h3>Online Safety Video Series</h3>
+                <p>Learn about different aspects of online safety through our educational video series.</p>
+                <a href="{{ url_for('resources') }}#video-series" class="resource-link">Watch Videos</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="faq-section">
+    <div class="container">
+        <div class="section-title">
+            <h2>Frequently Asked Questions About Cybersecurity</h2>
+        </div>
+        <div class="faq-container">
+            <div class="faq-item">
+                <input type="checkbox" id="faq1" class="faq-toggle">
+                <label for="faq1" class="faq-question">
+                    <span>How do I know if my account has been compromised?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </label>
+                <div class="faq-answer">
+                    <p>Signs of a compromised account include unexpected account activity, emails about password changes you didn't request, friends receiving messages you didn't send, or inability to log in. Check if your email has been involved in data breaches using services like Have I Been Pwned.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <input type="checkbox" id="faq2" class="faq-toggle">
+                <label for="faq2" class="faq-question">
+                    <span>What's the difference between a virus and malware?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </label>
+                <div class="faq-answer">
+                    <p>Malware is a broad term for any malicious software designed to harm devices or networks. A virus is a specific type of malware that replicates by inserting its code into other programs. Other malware types include ransomware, spyware, adware, and trojans.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <input type="checkbox" id="faq3" class="faq-toggle">
+                <label for="faq3" class="faq-question">
+                    <span>How can I protect my children online?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </label>
+                <div class="faq-answer">
+                    <p>Protect kids online by maintaining open communication, using parental controls, teaching online privacy and safety, setting screen time rules, and staying informed about their apps and platforms.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <input type="checkbox" id="faq4" class="faq-toggle">
+                <label for="faq4" class="faq-question">
+                    <span>Why should I use a password manager?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </label>
+                <div class="faq-answer">
+                    <p>Password managers generate and store strong, unique passwords, requiring only one master password. They prevent password reuse, thwart brute force attacks, and often include auto-fill, secure notes, and security alerts.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <input type="checkbox" id="faq5" class="faq-toggle">
+                <label for="faq5" class="faq-question">
+                    <span>What is two-factor authentication and why should I use it?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </label>
+                <div class="faq-answer">
+                    <p>Two-factor authentication (2FA) enhances security by requiring two verification methods: a password and a second factor (e.g., a phone code). It prevents unauthorized access even if your password is stolen.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Script to handle FAQ toggle
+    document.addEventListener('DOMContentLoaded', function() {
+        const faqQuestions = document.querySelectorAll('.faq-question');
+        
+        faqQuestions.forEach(question => {
+            question.addEventListener('click', () => {
+                const answer = question.nextElementSibling;
+                const icon = question.querySelector('i');
+                
+                // Toggle the answer visibility
+                if (answer.style.display === 'none' || answer.style.display === '') {
+                    answer.style.display = 'block';
+                    icon.classList.remove('fa-chevron-down');
+                    icon.classList.add('fa-chevron-up');
+                } else {
+                    answer.style.display = 'none';
+                    icon.classList.remove('fa-chevron-up');
+                    icon.classList.add('fa-chevron-down');
+                }
+            });
+            
+            // Hide answers initially
+            question.nextElementSibling.style.display = 'none';
+        });
+    });
+</script>
+{% endblock %}

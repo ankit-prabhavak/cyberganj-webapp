@@ -1,0 +1,484 @@
+{% extends 'base.html' %}
+
+{% block title %}CyberGanj - Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Dashboard specific styles - using selector scoping to avoid affecting base styles */
+
+.cybganj-dashboard {
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  background: #f3f4f6;
+  font-family: inherit;
+}
+
+.cybganj-dashboard .inner-container {
+  background: #ffffff;
+  max-width: 1200px;
+  width: 100%;
+  border-radius: 1rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+.cybganj-dashboard .dashboard-header {
+  background: linear-gradient(90deg, #3498db, #2980b9);
+  color: #ffffff;
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cybganj-dashboard .dashboard-header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.cybganj-dashboard .header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cybganj-dashboard .notification-bell {
+  position: relative;
+  cursor: pointer;
+  font-size: 1.25rem;
+}
+
+.cybganj-dashboard .notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #ef4444;
+  border-radius: 9999px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.cybganj-dashboard .user-welcome {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.cybganj-dashboard .dashboard-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .cybganj-dashboard .dashboard-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cybganj-dashboard .cybganj-card {
+  background: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+}
+
+.cybganj-dashboard .cybganj-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.cybganj-dashboard .card-header {
+  background: #e5e7eb;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cybganj-dashboard .card-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cybganj-dashboard .card-header h2 i {
+  color: #3498db;
+}
+
+.cybganj-dashboard .card-header .card-actions {
+  color: #9ca3af;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.cybganj-dashboard .card-header .card-actions:hover {
+  color: #3498db;
+}
+
+.cybganj-dashboard .card-body {
+  padding: 1.5rem;
+}
+
+.cybganj-dashboard .info-item, 
+.cybganj-dashboard .log-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.cybganj-dashboard .info-item:last-child, 
+.cybganj-dashboard .log-item:last-child {
+  border-bottom: none;
+}
+
+.cybganj-dashboard .info-item i, 
+.cybganj-dashboard .log-item i {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #3498db;
+  color: #ffffff;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+}
+
+.cybganj-dashboard .log-item i {
+  background: #34d399;
+}
+
+.cybganj-dashboard .info-label {
+  font-weight: 600;
+  color: #374151;
+  min-width: 100px;
+}
+
+.cybganj-dashboard .info-value {
+  color: #111827;
+}
+
+.cybganj-dashboard .log-time {
+  margin-left: auto;
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.cybganj-dashboard .profile-image-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+}
+
+.cybganj-dashboard .profile-image {
+  width: 180px;
+  height: 180px;
+  border-radius: 9999px;
+  object-fit: cover;
+  border: 4px solid #3498db;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.cybganj-dashboard .profile-image-actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.cybganj-dashboard .image-action-btn {
+  padding: 0.5rem 1rem;
+  background: #e5e7eb;
+  border: none;
+  border-radius: 0.5rem;
+  color: #374151;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.cybganj-dashboard .image-action-btn:hover {
+  background: #9ca3af;
+  color: #ffffff;
+}
+
+.cybganj-dashboard .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #3498db;
+  color: #ffffff;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.3s ease, transform 0.15s ease;
+  cursor: pointer;
+}
+
+.cybganj-dashboard .button:hover {
+  background: #3498db;
+  transform: translateY(-2px);
+}
+
+.cybganj-dashboard .button i {
+  font-size: 1rem;
+}
+
+.cybganj-dashboard .button-secondary {
+  background: #10b981;
+}
+
+.cybganj-dashboard .button-secondary:hover {
+  background: #059669;
+}
+
+.cybganj-dashboard .button-outline {
+  background: transparent;
+  border: 2px solid #3498db;
+  color: #3498db;
+}
+
+.cybganj-dashboard .button-outline:hover {
+  background: #3498db;
+  color: #ffffff;
+}
+
+.cybganj-dashboard .button-danger {
+  background: #ef4444;
+}
+
+.cybganj-dashboard .button-danger:hover {
+  background: #dc2626;
+}
+
+.cybganj-dashboard .action-buttons {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.security-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(16, 185, 129, 0.1);
+  border-left: 4px solid var(--secondary-color);
+  border-radius: var(--border-radius-sm);
+}
+
+.security-tip i {
+  color: var(--secondary-color);
+  font-size: 1.5rem;
+}
+
+.security-tip p {
+  margin: 0;
+  color: var(--gray-dark);
+}
+
+.security-tip-header {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+/* Animations */
+@keyframes cybganj-fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.cybganj-dashboard .fadeIn {
+  animation: cybganj-fadeIn 0.5s ease;
+}
+
+@keyframes cybganj-slideInUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.cybganj-dashboard .card {
+  animation: cybganj-slideInUp 0.3s ease;
+}
+
+.cybganj-dashboard .card:nth-child(1) { animation-delay: 0.1s; }
+.cybganj-dashboard .card:nth-child(2) { animation-delay: 0.2s; }
+.cybganj-dashboard .card:nth-child(3) { animation-delay: 0.3s; }
+.cybganj-dashboard .card:nth-child(4) { animation-delay: 0.4s; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cybganj-dashboard">
+  <div class="inner-container fadeIn">
+    <div class="dashboard-header">
+      <h1><i class="fas fa-shield-alt"></i> CyberGanj Dashboard</h1>
+      <div class="header-actions">
+        <div class="notification-bell">
+          <i class="fas fa-bell"></i>
+          <div class="notification-badge">0</div>
+        </div>
+        <div class="user-welcome">Welcome, {{ user.name }}</div>
+      </div>
+    </div>
+
+    <div class="dashboard-content">
+      <!-- Left Column -->
+      <div>
+        <!-- User Info Card -->
+        <div class="card cybganj-card">
+          <div class="card-header">
+            <h2><i class="fas fa-user-circle"></i> User Information</h2>
+            <div class="card-actions">
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="info-item">
+              <i class="fas fa-user"></i>
+              <div class="info-label">Name:</div>
+              <div class="info-value">{{ user.name }}</div>
+            </div>
+            <div class="info-item">
+              <i class="fas fa-code-branch"></i>
+              <div class="info-label">Branch:</div>
+              <div class="info-value">{{ user.branch }}</div>
+            </div>
+            <div class="info-item">
+              <i class="fas fa-id-card"></i>
+              <div class="info-label">Roll Number:</div>
+              <div class="info-value">{{ user.roll_number }}</div>
+            </div>
+            <div class="info-item">
+              <i class="fas fa-map-marker-alt"></i>
+              <div class="info-label">Address:</div>
+              <div class="info-value">{{ user.address }}</div>
+            </div>
+            <div class="info-item">
+              <i class="fas fa-user-circle"></i>
+              <div class="info-label">Username:</div>
+              <div class="info-value">{{ user.username }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Image Card -->
+        <div class="card cybganj-card" style="margin-top: 1.5rem;">
+          <div class="card-header">
+            <h2><i class="fas fa-image"></i> Profile Image</h2>
+            <div class="card-actions">
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </div>
+          <div class="profile-image-container">
+            <img src="{{ url_for('static', filename='images/' + user.username + '_profile.png') }}" alt="Profile Image" class="profile-image">
+            <div class="profile-image-actions">
+              <button class="image-action-btn"><i class="fas fa-upload"></i> Upload</button>
+              <button class="image-action-btn"><i class="fas fa-crop"></i> Edit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div>
+        <!-- Quick Actions Card -->
+        <div class="card cybganj-card">
+          <div class="card-header">
+            <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
+            <div class="card-actions">
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="action-buttons">
+              <a href="{{ url_for('update_profile') }}" class="button">
+                <i class="fas fa-user-edit"></i> Update Profile
+              </a>
+              <a href="{{ url_for('security_check') }}" class="button button-secondary">
+                <i class="fas fa-shield-alt"></i> Check Security Status
+              </a>
+              <a href="{{ url_for('logout') }}" class="button button-danger">
+                <i class="fas fa-sign-out-alt"></i> Logout
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Security Tip Card -->
+        <div class="card cybganj-card" style="margin-top: 1.5rem;">
+          <div class="card-header">
+            <h2><i class="fas fa-lightbulb"></i> Security Tip</h2>
+            <div class="card-actions">
+              <i class="fas fa-sync-alt"></i>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="security-tip">
+              <i class="fas fa-lock"></i>
+              <div>
+                <div class="security-tip-header">Password Security</div>
+                <p>Use strong, unique passwords for each account to enhance your cybersecurity. Consider using a password manager to securely store your credentials.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Log Card -->
+        <div class="card cybganj-card" style="margin-top: 1.5rem;">
+          <div class="card-header">
+            <h2><i class="fas fa-history"></i> Recent Activity</h2>
+            <div class="card-actions">
+              <i class="fas fa-ellipsis-v"></i>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="log-item">
+              <i class="fas fa-sign-in-alt"></i>
+              <div class="info-value">Logged in</div>
+              <div class="log-time">{{ user.last_login.strftime('%Y-%m-%d %I:%M %p') if user.last_login else '2025-05-08 10:30 AM' }}</div>
+            </div>
+            <div class="log-item">
+              <i class="fas fa-user-edit"></i>
+              <div class="info-value">Updated profile</div>
+              <div class="log-time">{{ '2025-05-07 3:15 PM' }}</div>
+            </div>
+            <div class="log-item">
+              <i class="fas fa-shield-alt"></i>
+              <div class="info-value">Security check performed</div>
+              <div class="log-time">{{ '2025-05-06 9:00 AM' }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,576 @@
+{% extends "base.html" %}
+
+{% block title %}About CyberGanj - Our Cybersecurity Mission{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Keep navigation bar color unchanged by not overriding base.html styles */
+
+    .hero-section {
+        background: linear-gradient(rgba(44, 62, 80, 0.9), rgba(44, 62, 80, 0.9)), 
+                    url("{{ url_for('static', filename='images/cyber-bg.jpg') }}") center/cover no-repeat;
+        color: white;
+        padding: 5rem 0;
+        text-align: center;
+        margin-bottom: 3rem;
+        position: relative;
+    }
+
+    .hero-content h1 {
+        font-size: 3.5rem;
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .hero-content p {
+        font-size: 1.4rem;
+        max-width: 800px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+ 
+
+    /* Section Styling */
+    .section {
+        margin-bottom: 5rem;
+        position: relative;
+        
+    }
+
+    .section h2 {
+        font-size: 2.2rem;
+        margin-bottom: 2rem;
+        color:  #333;
+        position: relative;
+        padding-bottom: 0.75rem;
+        text-align: center;
+        font-weight: 700;
+    }
+
+    .section h2::after {
+      display: none
+    }
+
+    /* Card Styling with hover effects */
+    .card {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-top:6px solid #3498db;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .card h3 {
+        font-size: 1.5rem;
+        color: #4a154b;
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+
+    .card p {
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.7;
+        color: #333;
+    }
+
+    /* Image Styling for Founder Photo */
+    .founder-photo {
+        display: block;
+        width: 100%;
+        max-width: 310px;
+        height: 365px;
+        border-radius: 50%;
+        margin: 0 auto 2rem auto;
+        object-fit: cover;
+        border: 5px solid   #2980b9;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Goals Grid */
+    .goals-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .goal-card {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        text-align: center;
+        border-top: 4px solid #3498db;
+    }
+
+    .goal-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .goal-card i {
+        font-size: 3rem;
+        color: #4a154b;
+        margin-bottom: 1.5rem;
+    }
+
+    .goal-card h3 {
+        font-size: 1.5rem;
+        color: #4a154b;
+        margin-bottom: 1rem;
+    }
+
+    .goal-card p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+
+    /* Team Section */
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2.5rem;
+        margin-top: 3rem;
+    }
+
+    .team-member {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-top: 4px solid #3498db;
+    }
+
+    .team-member:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .team-photo {
+        width: 210px;
+        height: 250px;
+        border-radius: 50%;
+        margin: 0 auto 1.5rem auto;
+        object-fit: cover;
+        border: 4px solid  #2980b9;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .team-member h3 {
+        font-size: 1.5rem;
+        color: #4a154b;
+        margin-bottom: 0.5rem;
+    }
+
+    .team-member h4 {
+        font-size: 1.1rem;
+        color: #666;
+        margin-bottom: 1rem;
+        font-weight: 500;
+    }
+
+    .team-member p {
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    .social-icons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .social-icons a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #4a154b;
+        color: white;
+        transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    .social-icons a:hover {
+        transform: translateY(-3px);
+        background-color: #5d2d5f;
+    }
+
+    /* Call to Action Section */
+    .cta-section {
+        background: linear-gradient(rgba(74, 21, 75, 0.9), rgba(74, 21, 75, 0.9)), 
+                    url("{{ url_for('static', filename='images/cta-bg.jpg') }}") center/cover no-repeat;
+        padding: 5rem 0;
+        text-align: center;
+        color: white;
+        border-radius: 10px;
+        margin: 4rem 0;
+    }
+
+    .cta-content h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .cta-content p {
+        font-size: 1.2rem;
+        max-width: 800px;
+        margin: 0 auto 2rem auto;
+        line-height: 1.6;
+    }
+
+    .cta-btn {
+        display: inline-block;
+        background-color: white;
+        color: #4a154b;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .cta-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Stats Section */
+    .stats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin: 3rem 0;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 2rem;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-number {
+        font-size: 3rem;
+        font-weight: 700;
+        color: hsl(4, 100%, 51%);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        font-size: 1.1rem;
+        color: #666;
+    }
+
+    /* Timeline Section */
+    .timeline {
+        position: relative;
+        max-width: 1200px;
+        margin: 3rem auto;
+    }
+    
+
+   
+
+    @media (max-width: 768px) {
+        .hero-content h1 {
+            font-size: 2.5rem;
+        }
+        
+        .hero-content p {
+            font-size: 1.2rem;
+        }
+        
+        .section {
+            padding: 2rem 0;
+        }
+        
+        .section h2 {
+            font-size: 2rem;
+        }
+
+        .goals-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .founder-photo {
+            max-width: 180px;
+            height: 180px;
+        }
+
+        .team-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stats-container {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .hero-content h1 {
+            font-size: 2rem;
+        }
+        
+        .hero-section {
+            padding: 3rem 0;
+        }
+
+        .stats-container {
+            grid-template-columns: 1fr;
+        }
+
+        .cta-content h2 {
+            font-size: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <h1>About CyberGanj</h1>
+            <p>Pioneering digital safety awareness and empowering individuals to navigate the cyber world with confidence and security</p>
+        </div>
+    </div>
+</section>
+
+<div class="container">
+    <!-- My Story Section -->
+    <section class="section">
+        <h2>Our Story</h2>
+        <div class="card">
+            <img src="{{ url_for('static', filename='images/profile.jpg') }}" alt="Ankit - Founder of CyberGanj" class="founder-photo">
+            <h3 style="text-align: center; font-weight: bold; color: #4a154b;">Ankit Prabhavak</h3>
+            <h4 style="text-align: center; font-weight: bold; color: #666;">Founder & Developer</h4>
+
+
+            <p>Hi, I'm Ankit — a second-year B.Tech student with a strong interest in cybersecurity and a drive to build a solid career in this field. I started CyberGanj not as an expert, but as someone genuinely concerned about how little awareness there is around online threats, especially among everyday users.</p>
+
+            <p>I've seen people close to me fall for scams, leak personal information unknowingly, or use weak passwords without realizing the risks. These moments made me realize that cybersecurity isn’t just for IT professionals — it's something everyone should understand at a basic level.</p>
+
+            <p>CyberGanj is my small step toward spreading awareness and making digital safety easier to grasp for all. While I’m still learning and growing, this platform is a way for me to share what I’ve learned so far and help others stay safer online.</p>
+
+            <p>My goal is to keep learning, improving, and eventually contribute to the cybersecurity field in a big way — and CyberGanj is where that journey begins.</p>
+        </div>
+    </section>
+
+
+    <!-- Our Impact Statistics -->
+    <section class="section">
+        <h2>Our Impact</h2>
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-number">10K+</div>
+                <div class="stat-label">Monthly Visitors</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">25+</div>
+                <div class="stat-label">Educational Resources</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">15</div>
+                <div class="stat-label">Workshops Conducted</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">5K+</div>
+                <div class="stat-label">Newsletter Subscribers</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Mission Section -->
+    <section class="section">
+        <h2>Our Mission</h2>
+        <div class="card">
+            <p>At CyberGanj, our mission extends beyond simply sharing information—we aim to fundamentally transform how people perceive and interact with digital security. In a world where technology is deeply integrated into every aspect of our lives, we believe cybersecurity awareness should be as commonplace as looking both ways before crossing the street.</p>
+            
+            <p>We envision a digital landscape where individuals don't just passively consume technology but actively engage with it from a position of knowledge and confidence. Through our carefully curated resources, interactive workshops, and community initiatives, we strive to:</p>
+            
+            <ul style="margin-bottom: 1.5rem; line-height: 1.7; font-size: 1.1rem; color: #333; padding-left: 1.5rem;">
+                <li><strong>Democratize cybersecurity knowledge</strong> by breaking down complex concepts into understandable, actionable advice</li>
+                <li><strong>Empower vulnerable populations</strong> including seniors, children, and non-technical users with the tools to protect themselves online</li>
+                <li><strong>Foster a culture of digital responsibility</strong> where privacy and security considerations become second nature</li>
+                <li><strong>Build bridges</strong> between cybersecurity professionals and the general public</li>
+                <li><strong>Create sustainable awareness</strong> that evolves alongside emerging threats and technologies</li>
+            </ul>
+            
+            <p>We measure our success not by the volume of content we produce, but by the real-world impact of our work—every person who creates a stronger password, recognizes a phishing attempt, or secures their home network represents a small but significant victory in our mission.</p>
+        </div>
+    </section>
+
+    <!-- Our Goals Section -->
+    <section class="section">
+        <h2>Our Strategic Goals</h2>
+        <div class="goals-grid">
+            <div class="goal-card">
+                <i class="fas fa-graduation-cap"></i>
+                <h3>Educate and Inform</h3>
+                <p>Develop and distribute clear, actionable cybersecurity guidance for people of all technical backgrounds and age groups.</p>
+            </div>
+            <div class="goal-card">
+                <i class="fas fa-bullhorn"></i>
+                <h3>Raise Awareness</h3>
+                <p>Highlight the critical importance of digital safety through engaging content, real-world examples, and proactive outreach programs.</p>
+            </div>
+            <div class="goal-card">
+                <i class="fas fa-users"></i>
+                <h3>Build a Community</h3>
+                <p>Foster a supportive network where individuals can share experiences, ask questions, and collectively enhance their cybersecurity knowledge.</p>
+            </div>
+            <div class="goal-card">
+                <i class="fas fa-hands-helping"></i>
+                <h3>Provide Practical Solutions</h3>
+                <p>Offer concrete tools, techniques, and resources that address common cybersecurity challenges faced in everyday digital interactions.</p>
+            </div>
+            <div class="goal-card">
+                <i class="fas fa-shield-alt"></i>
+                <h3>Empower Vulnerable Groups</h3>
+                <p>Create specialized resources for demographics who may be particularly targeted by cyber threats or have unique protection needs.</p>
+            </div>
+            <div class="goal-card">
+                <i class="fas fa-globe"></i>
+                <h3>Expand Global Reach</h3>
+                <p>Make our resources available across linguistic and cultural boundaries to support digital safety worldwide.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Cybersecurity Matters Section -->
+    <section class="section">
+        <h2>Why Cybersecurity Matters</h2>
+        <div class="card">
+            <p>In today's hyper-connected digital age, we're more plugged in than ever before—scrolling, streaming, shopping, and sharing our lives online. But with this constant connection comes a silent shadow: vulnerability. Cybersecurity isn't just a buzzword or a technical concern for IT professionals—it's a real, everyday shield that protects our identities, our privacy, and our peace of mind.</p>
+            
+            <p>The digital threats we face are diverse and ever-evolving:</p>
+            
+            <ul style="margin-bottom: 1.5rem; line-height: 1.7; font-size: 1.1rem; color: #333; padding-left: 1.5rem;">
+                <li><strong>Personal data breaches</strong> expose our sensitive information to malicious actors</li>
+                <li><strong>Financial fraud</strong> costs victims billions annually across the globe</li>
+                <li><strong>Identity theft</strong> can take years to recover from, causing both financial and emotional distress</li>
+                <li><strong>Ransomware attacks</strong> are increasingly targeting individuals, not just corporations</li>
+                <li><strong>Social engineering</strong> exploits human psychology rather than technical vulnerabilities</li>
+                <li><strong>IoT vulnerabilities</strong> create new entry points as our homes become smarter</li>
+            </ul>
+            
+            <p>What makes these threats particularly concerning is their democratic nature—they target everyone, regardless of age, technical proficiency, or socioeconomic status. The grandmother checking her email, the teenager posting on social media, the professional working remotely—all face unique but significant risks in the digital space.</p>
+            
+            <p>That's precisely why CyberGanj exists. We believe that awareness is the first line of defense, and that everyone deserves access to the knowledge they need to protect themselves online. Our resources are designed to demystify cybersecurity, translating complex concepts into practical, accessible advice that anyone can implement.</p>
+            
+            <p>Because the truth is, even the smallest habits—like using strong passwords, enabling two-factor authentication, or recognizing the signs of a phishing attempt—can make a significant difference in your digital safety. By empowering individuals with this knowledge, we're working toward a world where cybersecurity isn't an afterthought but an integrated part of how we engage with technology.</p>
+            
+            <p>Let's decode the dangers of the internet together and build a safer digital world for all.</p>
+        </div>
+    </section>
+
+    <!-- Meet Our Team Section -->
+    <section class="section">
+        <h2>Meet Our Team</h2>
+        <p style="text-align: center; margin-bottom: 2rem; font-size: 1.2rem;">Meet the passionate minds driving CyberGanj — a team united by the vision of a safer, smarter digital future for all.</p>
+        
+        <div class="team-grid">
+           <div class="team-member">
+    <img src="{{ url_for('static', filename='images/ankit.jpg') }}" alt="Ankit - Founder & Developer" class="team-photo">
+    <h3>Ankit Prabhavak</h3>
+    <h4>Founder & Developer</h4>
+    <p>I'm a second-year B.Tech CSE student with a strong interest in cybersecurity. I built CyberGanj from scratch — writing the logic, developing features, and shaping the platform to spread awareness and share what I’m learning along the way.</p>
+    <div class="social-icons">
+        <!-- <a href="https://linkedin.com/in/ankit-prabhavak"><i class="fab fa-linkedin"></i></a>
+        <a href="https://x.com/ankit_prabhavak"><i class="fab fa-twitter"></i></a>
+        <a href="https://github.com/ankit-prabhavak"><i class="fas fa-github"></i></a> -->
+        <a href="https://instagram.com/ankit_prabhavak" aria-label="Like us on Instagram"><img src="{{ url_for('static', filename='images/instagram.png') }}" alt="Instagram"></a>
+        <a href="https://linkedin.com/in/ankit-prabhavak" aria-label="Follow us on LinkedIn"><img src="{{ url_for('static', filename='images/linkedin.png') }}" alt="LinkedIn"></a>
+        <a href="https://github.com/ankit-prabhavak" aria-label="Visit our GitHub repository"><img src="{{ url_for('static', filename='images/github.webp') }}" alt="GitHub"></a>
+                        
+    </div>
+</div>
+
+
+
+<div class="team-member">
+    <img src="{{ url_for('static', filename='images/kavya.jpg') }}" alt="Kavya - Content Contributor" class="team-photo">
+    <h3>Kavya Chaturvedi</h3>
+    <h4>Content Contributor</h4>
+    <p>Kavya helped bring clarity to our content. With a knack for simplifying technical topics, he worked on drafting explanations and ensuring our messages are easy to follow for everyone visiting the site.</p>
+    <div class="social-icons">
+        <a href="https://instagram.com/kavy___17" aria-label="Like us on Instagram"><img src="{{ url_for('static', filename='images/instagram.png') }}" alt="Instagram"></a>
+        <a href="https://www.linkedin.com/in/kavya-chaturvedi-1a181932a?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BPkVa8qsSRvW9CBxs%2F03pfQ%3D%3D" aria-label="Follow us on LinkedIn"><img src="{{ url_for('static', filename='images/linkedin.png') }}" alt="LinkedIn"></a>
+        <a href="https://github.com/Kavychaturvedi5427" aria-label="Visit our GitHub repository"><img src="{{ url_for('static', filename='images/github.webp') }}" alt="GitHub"></a>
+
+    </div>
+</div>
+
+<div class="team-member">
+    <img src="{{ url_for('static', filename='images/anmol.jpg') }}" alt="Anmol - UI Designer" class="team-photo">
+    <h3>Anmol Gupta</h3>
+    <h4>UI Designer</h4>
+    <p>Anmol significantly contributed to the visual design of CyberGanj. He helped shape the overall layout, color palette, and interface styling to give the site a modern, clean, and user-friendly look.</p>
+    <div class="social-icons">
+        <a href="https://instagram.com/itz.anmol_gupta" aria-label="Like us on Instagram"><img src="{{ url_for('static', filename='images/instagram.png') }}" alt="Instagram"></a>
+        <a href="https://www.linkedin.com/in/anmol-gupta-714933308?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3Bnhd7KoLJQbimh9MNkWM6Rw%3D%3D" aria-label="Follow us on LinkedIn"><img src="{{ url_for('static', filename='images/linkedin.png') }}" alt="LinkedIn"></a>
+        <a href="https://github.com/anmolgupta2704" aria-label="Visit our GitHub repository"><img src="{{ url_for('static', filename='images/github.webp') }}" alt="GitHub"></a>
+
+       
+    </div>
+</div>
+
+        
+        </div>
+    </section>
+
+    <!-- Partners & Collaborators Section -->
+    <section class="section">
+        <h2>Allies in Our Mission for a Safer Digital World</h2>
+        <div class="card">
+            <p style="text-align: center; margin-bottom: 2rem; font-size: 1.1rem;">
+    At CyberGanj, we're actively looking to collaborate with organizations and institutions that share our passion for digital safety and cybersecurity awareness.
+</p>
+
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 3rem; margin: 2rem 0;">
+    <div style="text-align: center; width: 150px;">
+        <img src="{{ url_for('static', filename='images/partner1.jpg') }}" alt="Digital Safety Alliance" style="width: 100%; height: auto; margin-bottom: 1rem; border-radius: 8px;">
+        <p style="font-weight: 600; color: #4a154b;">Digital Safety Alliance</p>
+    </div>
+    <div style="text-align: center; width: 150px;">
+        <img src="{{ url_for('static', filename='images/partner2.jpg') }}" alt="CyberEd Foundation" style="width: 100%; height: auto; margin-bottom: 1rem; border-radius: 8px;">
+        <p style="font-weight: 600; color: #4a154b;">CyberEd Foundation</p>
+    </div>
+    <div style="text-align: center; width: 150px;">
+        <img src="{{ url_for('static', filename='images/partner3.jpg') }}" alt="Tech4All Initiative" style="width: 100%; height: auto; margin-bottom: 1rem; border-radius: 8px;">
+        <p style="font-weight: 600; color: #4a154b;">Tech4All Initiative</p>
+    </div>
+    <div style="text-align: center; width: 150px;">
+        <img src="{{ url_for('static', filename='images/partner4.jpg') }}" alt="SecureNet Academy" style="width: 100%; height: auto; margin-bottom: 1rem; border-radius: 8px;">
+        <p style="font-weight: 600; color: #4a154b;">SecureNet Academy</p>
+    </div>
+</div>
+
+<p style="text-align: center; font-size: 1.1rem;">
+    Are you part of an initiative focused on online safety, education, or cybersecurity? 
+    <br>
+    <a href="#" style="color: #4a154b; font-weight: 600;">Contact us</a> — let’s make something impactful together.
+</p>
+
+        </div>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}CyberGanj - Interactive Security Tools{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/password.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>Interactive Security Tools</h1>
+        <p>Practical tools to help you assess and improve your cybersecurity practices</p>
+    </div>
+</section>
+
+<section class="tools-section" id="password-checker">
+    <div class="container">
+        <div class="tool-card">
+            <div class="tool-header">
+                <div class="tool-icon">
+                    <i class="fas fa-key"></i>
+                </div>
+                <h2>Password Strength Checker</h2>
+            </div>
+            <div class="tool-description">
+                <p>Test the strength of your passwords and get recommendations for improvements. This tool analyzes your password against common security criteria including length, character variety, and predictability.</p>
+                <div class="security-note">
+                    <i class="fas fa-lock"></i>
+                    <p><strong>Security Note:</strong> Your password is never stored or transmitted. All analysis happens directly in your browser.</p>
+                </div>
+            </div>
+            <div class="tool-interface">
+                <div class="input-group">
+                    <input type="password" id="password-input" placeholder="Enter a password to check" class="password-field">
+                    <button id="toggle-password" type="button" aria-label="Toggle password visibility">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <button id="check-password" class="btn btn-primary">Check Strength</button>
+                
+                <div id="password-result" class="result-container hidden">
+                    <div class="strength-meter">
+                        <div class="strength-label">Strength:</div>
+                        <div id="strength-text">-</div>
+                        <div class="strength-bar-container">
+                            <div id="strength-bar" class="strength-bar"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="feedback-section">
+                        <h3>Feedback</h3>
+                        <ul id="feedback-list"></ul>
+                    </div>
+                    
+                    <div class="security-tips">
+                        <h3>Password Security Tips</h3>
+                        <ul>
+                            <li>Use at least 12 characters for better security</li>
+                            <li>Combine uppercase letters, lowercase letters, numbers, and special characters</li>
+                            <li>Avoid common words, phrases, or personal information</li>
+                            <li>Use a different password for each account</li>
+                            <li>Consider using a password manager for secure storage</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="tools-section" id="security-checklist">
+    <div class="container">
+        <div class="tool-card">
+            <div class="tool-header">
+                <div class="tool-icon">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <h2>Personal Security Checklist</h2>
+            </div>
+            <div class="tool-description">
+                <p>Track your progress in implementing essential cybersecurity practices with this interactive checklist. Mark items as complete as you improve your security posture.</p>
+            </div>
+            <div class="tool-interface">
+                <div class="checklist-container">
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check1" class="security-checkbox">
+                        <label for="check1">Enable two-factor authentication on all important accounts</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check2" class="security-checkbox">
+                        <label for="check2">Use unique passwords for each online account</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check3" class="security-checkbox">
+                        <label for="check3">Set up automatic software updates on all devices</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check4" class="security-checkbox">
+                        <label for="check4">Install and maintain up-to-date antivirus/anti-malware software</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check5" class="security-checkbox">
+                        <label for="check5">Regularly back up important data to secure locations</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check6" class="security-checkbox">
+                        <label for="check6">Use encrypted communications where possible (HTTPS, secure messaging)</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check7" class="security-checkbox">
+                        <label for="check7">Review privacy settings on social media accounts</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check8" class="security-checkbox">
+                        <label for="check8">Secure your home WiFi network with strong encryption</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check9" class="security-checkbox">
+                        <label for="check9">Use a VPN when connecting to public WiFi networks</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="check10" class="security-checkbox">
+                        <label for="check10">Set up secure screen locks on all mobile devices</label>
+                    </div>
+                </div>
+                <div class="checklist-progress">
+                    <div class="progress-label">Security Readiness:</div>
+                    <div class="progress-bar-container">
+                        <div id="progress-bar" class="progress-bar" style="width: 0%"></div>
+                    </div>
+                    <div id="progress-text">0/10 completed</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="coming-soon">
+    <div class="container">
+        <h2 class="section-title">More Tools Coming Soon</h2>
+        <div class="coming-soon-grid">
+            <div class="coming-soon-item">
+                <div class="coming-soon-icon">
+                    <i class="fas fa-fingerprint"></i>
+                </div>
+                <h3>Privacy Scanner</h3>
+                <p>Analyze your digital footprint and get recommendations for enhancing your online privacy.</p>
+            </div>
+            <div class="coming-soon-item">
+                <div class="coming-soon-icon">
+                    <i class="fas fa-wifi"></i>
+                </div>
+                <h3>Network Security Analyzer</h3>
+                <p>Basic checks to identify potential vulnerabilities in your home network setup.</p>
+            </div>
+            <div class="coming-soon-item">
+                <div class="coming-soon-icon">
+                    <i class="fas fa-envelope-open-text"></i>
+                </div>
+                <h3>Phishing Email Identifier</h3>
+                <p>Learn to spot the telltale signs of phishing attempts with interactive examples.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

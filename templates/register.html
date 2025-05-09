@@ -1,0 +1,317 @@
+{% extends 'base.html' %}
+
+{% block title %}FRUIT - Register{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Define CSS variables to match CyberGanj theme */
+:root {
+    /* Colors */
+    --primary-color: #2c3e50;
+    --primary-dark: #1a2530;
+    --secondary-color: #3498db;
+    --secondary-dark: #2980b9;
+    --accent-color: #e74c3c;
+    --light-color: #ecf0f1;
+    --dark-color: #2c3e50;
+    --gray-light: #f5f5f5;
+    --gray-medium: #e0e0e0;
+    --gray-dark: #7f8c8d;
+
+    /* Typography */
+    --font-primary: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --font-heading: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    /* Spacing */
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+
+    /* Borders */
+    --border-radius-md: 0.5rem;
+
+    /* Shadows */
+    --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
+
+    /* Transitions */
+    --transition-medium: 0.3s ease;
+}
+
+
+/* Scoped styles for the Register page */
+.register-container {
+    font-family: var(--font-primary);
+    background:linear-gradient(135deg, #2c3e50 0%, #1a2530 30%, #89c5ed 0%, #b9d6e9 100%);
+    /* Optional subtle gradient: background: linear-gradient(to bottom, #f8f9fa, #e8ecef); */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: var(--dark-color);
+    animation: fadeIn 2s ease-in-out;
+}
+
+/* Animation for background fade-in */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.register-container .inner-container {
+    background-color: var(--light-color);
+    padding: var(--space-xl); /* Increased padding */
+    width: 800px; /* Wider for landscape layout */
+    box-shadow: var(--shadow-md);
+    text-align: center;
+    border-radius: var(--border-radius-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform var(--transition-medium), box-shadow var(--transition-medium);
+    opacity: 0;
+    animation: containerFadeIn 1s forwards;
+    position: relative;
+    z-index: 10;
+}
+
+.register-container .inner-container:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+}
+
+@keyframes containerFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.register-container h1 {
+    color: var(--primary-color);
+    font-size: 2rem;
+    margin-bottom: var(--space-md);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    text-align: center;
+}
+
+.register-container h1:hover {
+    animation: textHoverAnimation 0.5s ease-out;
+}
+
+@keyframes textHoverAnimation {
+    0% {
+        color: var(--primary-color);
+        transform: scale(1);
+    }
+    100% {
+        color: var(--secondary-color);
+        transform: scale(1.05);
+    }
+}
+
+.register-container form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.register-container .form-content {
+    display: flex;
+    gap: var(--space-lg); /* Space between left and right sections */
+    width: 100%;
+    margin-bottom: var(--space-md);
+}
+
+.register-container .form-left,
+.register-container .form-right {
+    flex: 1; /* Equal width for both sections */
+    display: flex;
+    flex-direction: column;
+}
+
+.register-container .form-group {
+    margin-bottom: var(--space-md); /* Compact spacing */
+    text-align: left;
+}
+
+.register-container label {
+    font-size: 1rem;
+    color: var(--dark-color);
+    font-weight: 500;
+    margin-bottom: var(--space-sm);
+    display: block;
+}
+
+.register-container input,
+.register-container textarea {
+    width: 100%;
+    padding: var(--space-md);
+    border: 2px solid var(--gray-medium);
+    border-radius: var(--border-radius-md);
+    font-size: 1rem;
+    font-family: var(--font-primary);
+    transition: border-color var(--transition-medium);
+}
+
+.register-container input:focus,
+.register-container textarea:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+}
+
+.register-container textarea {
+    resize: vertical;
+    min-height: 76px;
+}
+
+.register-container .button {
+    display: inline-block;
+    padding: 1rem 2rem; /* Increased padding */
+    border-radius: var(--border-radius-md);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all var(--transition-medium);
+    cursor: pointer;
+    border: 2px solid var(--secondary-color);
+    background-color: var(--secondary-color);
+    color: var(--light-color);
+    text-decoration: none;
+    margin: var(--space-md) 0; /* Increased gap for vertical buttons */
+    animation: linkFadeIn 0.8s ease-in-out;
+}
+
+.register-container .button:hover {
+    background-color: var(--secondary-dark);
+    color: var(--light-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+@keyframes linkFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.register-container .video-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.register-container .button-group {
+    display: flex;
+    gap: var(--space-md); /* Side-by-side buttons */
+    margin: var(--space-md) 0;
+}
+
+.register-container video,
+.register-container canvas {
+    margin: var(--space-sm) 0;
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-sm);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="register-container">
+    <div class="inner-container">
+        <h1>Register</h1>
+        <form action="{{ url_for('register') }}" method="POST">
+            <div class="form-content">
+                <div class="form-left">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" name="username" id="username" placeholder="Enter your username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" name="password" id="password" placeholder="Enter your password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">Full Name:</label>
+                        <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="branch">Branch:</label>
+                        <input type="text" id="branch" name="branch" placeholder="Enter your branch" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="roll_number">Roll Number:</label>
+                        <input type="text" id="roll_number" name="roll_number" placeholder="Enter your roll number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address:</label>
+                        <input type="text" id="address" name="address" placeholder="Enter your address" required>
+                    </div>
+                </div>
+                <div class="form-right video-container">
+                    <label for="image_data">Capture your face:</label>
+                    <textarea name="image_data" id="image_data" hidden></textarea>
+                    <video id="video" width="320" height="240" autoplay></video>
+                    <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+                    <div class="button-group">
+                        <button type="button" class="button" onclick="startCamera()">Start Camera</button>
+                        <button type="button" class="button" onclick="captureImage()">Capture Image</button>
+                    </div>
+                    <button type="submit" class="button">Register</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/camera.js') }}"></script>
+<script>
+// Start camera and capture face during registration
+function startCamera() {
+    var video = document.getElementById('video');
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function (stream) {
+            video.srcObject = stream;
+        })
+        .catch(function (error) {
+            alert("Could not access webcam");
+        });
+}
+
+// Capture image from the webcam and set it in the form
+function captureImage() {
+    var video = document.getElementById('video');
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    var dataURL = canvas.toDataURL('image/png');
+    document.getElementById('image_data').value = dataURL;
+    alert("Image Captured"); // Alert to notify the user
+}
+</script>
+{% endblock %}

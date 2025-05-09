@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Logged Out - CyberGanj{% endblock %}
+
+{% block extra_css %}
+<style>
+    .logout-wrapper {
+        min-height: 90vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 3rem 1rem;
+        background-color: #f9f9f9;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    .logout-card {
+        background-color: #fff;
+        padding: 2rem 3rem;
+        border-radius: 1rem;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        max-width: 700px;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 2rem;
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    .logout-card h2 {
+        color: #2c3e50;
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .logout-card p {
+        color: #555;
+        font-size: 1.1rem;
+    }
+
+    .articles-section {
+        max-width: 900px;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .article-box {
+        background: #ffffff;
+        padding: 1.5rem;
+        border-radius: 1rem;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        transition: transform 0.3s ease;
+    }
+
+    .article-box:hover {
+        transform: translateY(-5px);
+    }
+
+    .article-box h3 {
+        color: #1f3c88;
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .article-box p {
+        color: #666;
+        font-size: 0.95rem;
+    }
+
+    .login-again-btn {
+        display: inline-block;
+        margin-top: 2rem;
+        padding: 0.75rem 2rem;
+        background:  #3498db;
+        color: #fff;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background 0.3s ease;
+    }
+
+    .login-again-btn:hover {
+        background:  #2980b9;
+        color: #fff;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .articles-section {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="logout-wrapper">
+    <div class="logout-card">
+        <h2>You've Successfully Logged Out</h2>
+        <p>Thanks for visiting CyberGanj. Stay informed and secure — here’s what’s happening in the cyber world:</p>
+    </div>
+
+    <div class="articles-section">
+        <div class="article-box">
+            <h3>🔐 AI & Password Cracking in 2025</h3>
+            <p>Recent breakthroughs in AI show how quickly passwords can be cracked using GPU power. Learn why passphrases matter more than ever.</p>
+        </div>
+
+        <div class="article-box">
+            <h3>🛡️ 5 Steps to Secure Your Mobile</h3>
+            <p>Did you know that 68% of malware targets Android phones? Discover five simple steps to keep your device secure.</p>
+        </div>
+
+        <div class="article-box">
+            <h3>🌐 Deepfake Scams Are Rising</h3>
+            <p>Cybercriminals are now using AI to impersonate voices and faces. Here’s how to detect deepfakes and protect yourself.</p>
+        </div>
+
+        <div class="article-box">
+            <h3>📧 Phishing Attacks Disguised as Job Offers</h3>
+            <p>Job scam phishing is the new favorite trick of hackers. Learn how to identify suspicious emails and fake company names.</p>
+        </div>
+    </div>
+
+    <a href="{{ url_for('login') }}" class="login-again-btn">Login Again</a>
+</div>
+{% endblock %}

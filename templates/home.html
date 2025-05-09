@@ -1,0 +1,231 @@
+ {% extends 'base.html' %}
+
+ {% block title %}FRUIT - Home{% endblock %}
+ 
+ {% block extra_css %}
+ <style>
+ /* Define CSS variables to match CyberGanj theme */
+ :root {
+     /* Colors */
+     --primary-color: #2c3e50;
+     --primary-dark: #1a2530;
+     --secondary-color: #3498db;
+     --secondary-dark: #2980b9;
+     --accent-color: #e74c3c;
+     --light-color: #ecf0f1;
+     --dark-color: #2c3e50;
+     --gray-light: #f5f5f5;
+     --gray-medium: #e0e0e0;
+     --gray-dark: #7f8c8d;
+ 
+     /* Typography */
+     --font-primary: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+     --font-heading: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+ 
+     /* Spacing */
+     --space-sm: 0.5rem;
+     --space-md: 1rem;
+     --space-lg: 1.5rem;
+     --space-xl: 2rem;
+ 
+     /* Borders */
+     --border-radius-md: 0.5rem;
+ 
+     /* Shadows */
+     --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.1);
+     --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
+     --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
+ 
+     /* Transitions */
+     --transition-medium: 0.3s ease;
+ }
+ 
+ /* Scoped styles for the Home page 
+ --primary-color: #2c3e50;
+    --primary-dark: #1a2530;
+    --secondary-color: #3498db;
+    --secondary-dark: #2980b9;
+    --accent-color: #e74c3c;
+ */
+ .home-container {
+     font-family: var(--font-primary);
+     background:linear-gradient(135deg, #2c3e50 0%, #1a2530 30%, #89c5ed 0%, #b9d6e9 100%); /* Softer off-white background for less eye strain */
+     /* Optional subtle gradient: background: linear-gradient(to bottom, #f8f9fa, #e8ecef); */
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     min-height: 100vh;
+     color: var(--dark-color);
+     animation: fadeIn 2s ease-in-out;
+ }
+ 
+ /* Animation for background fade-in */
+ @keyframes fadeIn {
+     0% {
+         opacity: 0;
+         transform: translateY(-30px);
+     }
+     100% {
+         opacity: 1;
+         transform: translateY(0);
+     }
+ }
+ 
+ .home-container .logo {
+     width: 150px;
+     height: 150px;
+     object-fit: cover;
+     border-radius: 50%;
+     margin-bottom: var(--space-md);
+     border: 3px solid var(--light-color);
+     box-shadow: var(--shadow-md);
+     position: relative;
+     z-index: 10;
+ }
+ 
+ .home-container .logo:hover {
+     cursor: pointer;
+     animation: pulse 1s ease-in-out infinite;
+ }
+ 
+ @keyframes pulse {
+     0% {
+         transform: scale(1);
+     }
+     50% {
+         transform: scale(1.05);
+     }
+     100% {
+         transform: scale(1);
+     }
+ }
+ 
+ .home-container .inner-container {
+     background-color: var(--light-color);
+     padding: var(--space-xl); /* Increased padding */
+     width: 450px;
+     box-shadow: var(--shadow-md);
+     text-align: center;
+     border-radius: var(--border-radius-md);
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     transition: transform var(--transition-medium), box-shadow var(--transition-medium);
+     opacity: 0;
+     animation: containerFadeIn 1s forwards;
+     position: relative;
+     z-index: 10;
+ }
+ 
+ .home-container .inner-container:hover {
+     transform: translateY(-6px);
+     box-shadow: var(--shadow-lg);
+ }
+ 
+ @keyframes containerFadeIn {
+     0% {
+         opacity: 0;
+         transform: translateY(20px);
+     }
+     100% {
+         opacity: 1;
+         transform: translateY(0);
+     }
+ }
+ 
+ .home-container h1 {
+     color: var(--primary-color);
+     font-size: 1.8rem;
+     margin-bottom: var(--space-md);
+     font-family: var(--font-heading);
+     font-weight: 700;
+     text-align: center;
+ }
+ 
+ .home-container h1:hover {
+     animation: textHoverAnimation 0.5s ease-out;
+ }
+ 
+ @keyframes textHoverAnimation {
+     0% {
+         color: var(--primary-color);
+         transform: scale(1);
+     }
+     100% {
+         color: var(--secondary-color);
+         transform: scale(1.05);
+     }
+ }
+ 
+ .home-container p {
+     font-size: 1rem;
+     color: var(--gray-dark);
+     margin-bottom: var(--space-md);
+     opacity: 0;
+     animation: fadeInParagraph 1s ease-out forwards;
+ }
+ 
+ @keyframes fadeInParagraph {
+     0% {
+         opacity: 0;
+         transform: translateY(20px);
+     }
+     100% {
+         opacity: 1;
+         transform: translateY(0);
+     }
+ }
+ 
+ .home-container .button {
+     display: inline-block;
+     padding: 1rem 2rem; /* Increased padding */
+     border-radius: var(--border-radius-md);
+     font-family: var(--font-heading);
+     font-weight: 700;
+     text-align: center;
+     text-transform: uppercase;
+     letter-spacing: 1px;
+     transition: all var(--transition-medium);
+     cursor: pointer;
+     border: 2px solid var(--secondary-color);
+     background-color: var(--secondary-color);
+     color: var(--light-color);
+     text-decoration: none;
+     position: relative;
+     z-index: 10;
+     animation: linkFadeIn 0.8s ease-in-out;
+     margin: var(--space-md) 0; /* Increased gap between buttons */
+ }
+ 
+ .home-container .button:hover {
+     background-color: var(--secondary-dark);
+     color: var(--light-color);
+     transform: translateY(-2px);
+     box-shadow: var(--shadow-md);
+ }
+ 
+ @keyframes linkFadeIn {
+     0% {
+         opacity: 0;
+         transform: translateX(-10px);
+     }
+     100% {
+         opacity: 1;
+         transform: translateX(0);
+     }
+ }
+ </style>
+ {% endblock %}
+ 
+ {% block content %}
+ <div class="home-container">
+     <div class="inner-container">
+         <img class="logo" src="{{ url_for('static', filename='Logo.jpg') }}" alt="FRUIT Logo">
+         <h1><b>FACE RECOGNITION UNIFIED INTERFACE TECHNOLOGY AND SERVICES</b></h1>
+         <p>
+             <a href="{{ url_for('login') }}" class="button">Login</a>
+             <a href="{{ url_for('register') }}" class="button">Register</a>
+         </p>
+     </div>
+ </div>
+ {% endblock %}

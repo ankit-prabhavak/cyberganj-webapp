@@ -1,0 +1,308 @@
+{% extends "base.html" %}
+
+{% block title %}CyberGanj - Digital Safety Resources{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Keep navigation bar color unchanged by not overriding base.html styles */
+
+    .hero-section {
+        background: linear-gradient(rgba(44, 62, 80, 0.9), rgba(44, 62, 80, 0.9));
+        color: white;
+        padding: 3rem 0;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .hero-content h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .hero-content p {
+        font-size: 1.2rem;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    /* Section Styling */
+    .section {
+        margin-bottom: 3rem;
+    }
+
+    .section h2 {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        color: var(--secondary-color); /* Matches --secondary-color from previous iterations */
+        position: relative;
+        padding-bottom: 0.75rem;
+    }
+
+    /* Remove lines under section headings */
+    .section h2::after {
+        display: none;
+    }
+
+    .section h2::before {
+        display: none;
+    }
+
+    /* Resource Grid */
+    .resources-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .resource-card {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        text-align: center; /* Center-align content for better image presentation */
+    }
+
+    .resource-card img {
+        display: block; /* Ensure the image behaves as a block element for centering */
+        width: 100%;
+        max-width: 150px; /* Limit image size */
+        height: auto;
+        border-radius: 5px;
+        margin: 0 auto 1rem auto; /* Center the image horizontally and add bottom margin */
+        object-fit: cover; /* Ensure images scale nicely */
+    }
+
+    .resource-card h3 {
+        font-size: 1.3rem;
+        color: #4a154b; /* Matches --primary-color from previous iterations */
+        margin-bottom: 0.5rem;
+    }
+
+    .resource-card p {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .hero-content h1 {
+            font-size: 2rem;
+        }
+        
+        .hero-content p {
+            font-size: 1rem;
+        }
+        
+        .section {
+            padding: 2rem 0;
+        }
+        
+        .section h2 {
+            font-size: 1.8rem;
+        }
+
+        .resources-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .resource-card img {
+            max-width: 120px; /* Smaller images on mobile */
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Digital Safety Resources</h1>
+            <p>Our top picks to help you stay safe online</p>
+        </div>
+    </div>
+</section>
+
+<!-- Recommended Books Section -->
+<section class="section">
+    <div class="container">
+        <h2>Recommended Books</h2>
+        <div class="resources-grid">
+            <div class="resource-card">
+                <img src="{{ url_for('static', filename='images/book1.jpg') }}" alt="Ghost in the Wires book cover">
+                <h3>Ghost in the Wires</h3>
+                <p>A book by Kevin Mitnick on his journey as a hacker and lessons in cybersecurity.</p>
+                <a href="https://www.amazon.in/GHOST-WIRES-ADVENTURES-WORLDS-WANTED/dp/0316037729">Buy Now</a>
+            </div>
+            <div class="resource-card">
+                <img src="{{ url_for('static', filename='images/book2.jpg') }}" alt="The Savvy Cyber Kids Guide book cover">
+                <h3>The Savvy Cyber Kids Guide</h3>
+                <p>A book by Savvy Cyber Kids for parents to raise cyber-aware children.</p>
+                <a href="https://www.amazon.in/Savvy-Cyber-Kids-Home-Computer/dp/098279682X">Buy Now</a>
+            </div>
+            <div class="resource-card">
+                <img src="{{ url_for('static', filename='images/book3.jpg') }}" alt="Tor: From the Dark Web book cover">
+                <h3>Tor: From the Dark Web</h3>
+                <p>A book by Ben Collier exploring privacy and the history of Tor.</p>
+                <a href="https://www.amazon.in/Tor-Dark-Web-Future-Privacy/dp/0262548186">Buy Now</a>
+            </div>
+            <div class="resource-card">
+                <img src="{{ url_for('static', filename='images/book4.jpg') }}" alt="Ghost in the Wires book cover">
+                <h3>Cybersecurity : From Basics to Expert</h3>
+                <p>"Cybersecurity: From Basics to Experts" is a comprehensive guide to cybersecurity for readers of all skill levels.</p>
+                <a href="https://www.amazon.in/Cybersecurity-Basics-Expert-Vipul-Baibhav/dp/B0BSF9L9TW">Buy Now</a>
+            </div>
+            <div class="resource-card">
+                <img src="{{ url_for('static', filename='images/book5.jpg') }}" alt="Ghost in the Wires book cover">
+                <h3>Cybersecurity for Dummies</h3>
+                <p>Protecting your business and family against Cyber attacks! If keeping your business or your family safe from cybersecurity threats is on your to-do list, cybersecurity for Dummies will introduce you to the basics of becoming cyber-secure!</p>
+                <a href="https://www.amazon.in/Cybersecurity-Dummies-Joseph-Steinberg/dp/8126562137/ref=sr_1_5?crid=3NZTKY7W6ST97&dib=eyJ2IjoiMSJ9.oyCoRcANcCmyopW_i0051Jbyaz8rGHsqMkAMEmhq56E6RR1ga6V1i8-pliU19CKCg7MbnOxztlQpn6SlsurFVoh0SCR4jsUmqCaB-fULNK0TWJWgb-TpKe_pIDq5Ixp7egQKErNS35ZnCz2Bgdp6nT9fQtD_nEb9lfke5AzEL7mNVSamE-vOe7eUe1ZnCRRep7PQXZqh6MkfW_vUDCi8SqfxS6QDUawmpqv7eIOgwu0.sDBxLObuytXY_ggD21HFUjBUyxjX_k1raRLeonAu568&dib_tag=se&keywords=cybersecurity+books&qid=1746557266&s=books&sprefix=cyber%2Cstripbooks%2C218&sr=1-5">Buy Now</a>
+            </div>
+            <div class="resource-card">
+                <img src="{{ url_for('static', filename='images/book6.jpg') }}" alt="Ghost in the Wires book cover">
+                <h3>Innovations in Cybersecurity Education</h3>
+                <p>The book includes topics such as: Network Security, Biometric Security, Data Security, Operating Systems Security, Security Countermeasures, Database Security, Cloud Computing Security, and Hardware and Supply Chain Security.</p>
+                <a href="https://www.amazon.in/Innovations-Cybersecurity-Education-Kevin-Daimi/dp/3030502465/ref=sr_1_2_sspa?crid=3NZTKY7W6ST97&dib=eyJ2IjoiMSJ9.oyCoRcANcCmyopW_i0051Jbyaz8rGHsqMkAMEmhq56E6RR1ga6V1i8-pliU19CKCg7MbnOxztlQpn6SlsurFVoh0SCR4jsUmqCaB-fULNK0TWJWgb-TpKe_pIDq5Ixp7egQKErNS35ZnCz2Bgdp6nT9fQtD_nEb9lfke5AzEL7mNVSamE-vOe7eUe1ZnCRRep7PQXZqh6MkfW_vUDCi8SqfxS6QDUawmpqv7eIOgwu0.sDBxLObuytXY_ggD21HFUjBUyxjX_k1raRLeonAu568&dib_tag=se&keywords=cybersecurity+books&qid=1746557266&s=books&sprefix=cyber%2Cstripbooks%2C218&sr=1-2-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&psc=1">Buy Now</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Recommended Websites Section -->
+<section class="section">
+    <div class="container">
+        <h2>Recommended Websites</h2>
+        <div class="resources-grid">
+            <div class="resource-card">
+                <img src="{{ url_for('static', filename='images/site1.jpeg') }}" alt="ConnectSafely website logo">
+                <h3>ConnectSafely</h3>
+                <p>A site offering tips on online safety, privacy, and security.</p>
+                <a href="https://connectsafely.org/">Visit</a>
+            </div>
+            <div class="resource-card">
+                <img src="{{ url_for('static', filename='images/site2.jpg') }}" alt="The Hacker News website logo">
+                <h3>The Hacker News</h3>
+                <p>A leading online platform delivering timely and comprehensive cybersecurity news.</p>
+                <a href="https://thehackernews.com/">Visit</a>
+            </div>
+            <div class="resource-card">
+                <img src="{{ url_for('static', filename='images/site3.jpg') }}" alt="Dark Reading website logo">
+                <h3>Dark Reading</h3>
+                <p>A community-driven site for cybersecurity news and insights.</p>
+                <a href="https://www.darkreading.com/">Visit</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Recommended Authors Section -->
+<section class="section">
+    <div class="container">
+        <h2>Recommended Authors</h2>
+        <div class="resources-grid">
+            <div class="resource-card">
+                <img src="{{ url_for('static', filename='images/author1.jpg') }}" alt="Bruce Schneier portrait">
+                <h3>Bruce Schneier</h3>
+                <p>A well-known cybersecurity expert and author.</p>
+                <a href="https://en.wikipedia.org/wiki/Bruce_Schneier">Read More</a>
+            </div>
+            <div class="resource-card">
+                <img src="{{ url_for('static', filename='images/author2.webp') }}" alt="Dr. Rob Long portrait">
+                <h3>Dr. Rob Long</h3>
+                <p>An author of safety books with practical insights.</p>
+                <a href="https://www.humandymensions.com/">Read More</a>
+            </div>
+            <div class="resource-card">
+                <img src="{{ url_for('static', filename='images/author4.jpg') }}" alt="Allie Hunter portrait">
+                <h3>Vivek Ramachandran</h3>
+                <p>Author of Backtrack 5 Wireless Penetration Testing Beginner's Guide.</p>
+                <a href="https://www.linkedin.com/in/vivekramachandran/">Read More</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Recommended YouTubers Section -->
+<section class="section">
+    <div class="container">
+        <h2>Recommended YouTubers</h2>
+        <div class="resources-grid">
+            <div class="resource-card">
+                <img src="{{ url_for('static', filename='images/youtuber1.jpg') }}" alt="Black Hills Information Security YouTube thumbnail">
+                <h3>Black Hills Information Security</h3>
+                <p>This channel focuses on information security.</p>
+                <a href="#">Open in YouTube</a>
+            </div>
+            <div class="resource-card">
+                <img src="{{ url_for('static', filename='images/youtuber2.jpg') }}" alt="HackWorld YouTube thumbnail">
+                <h3>Hackworld</h3>
+                <p>This channel focuses on ethical hacking.</p>
+                <a href="#">Open in YouTube</a>
+            </div>
+            <div class="resource-card">
+                <img src="{{ url_for('static', filename='images/youtuber3.jpg') }}" alt="Scammer Payback YouTube thumbnail">
+                <h3>Scammer Payback</h3>
+                <p>The Scammer Payback YouTube channel, run by an American YouTuber also known as Pierogi, focuses on "scam baiting."</p>
+                <a href="#">Open in YouTube</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Recommended Platforms Section -->
+<section class="section">
+    <div class="container">
+        <h2>Recommended Platforms</h2>
+        <div class="resources-grid">
+            <div class="resource-card">
+                <img src="{{ url_for('static', filename='images/plat1.png') }}" alt="Offensive Security platform logo">
+                <h3>Offensive Security</h3>
+                <p>Offensive Security is an American international company working in information security, penetration testing and digital forensics. Beginning around 2007, the company created open source projects, advanced security courses, the ExploitDB vulnerability database, and the Kali Linux distribution.</p>
+                <a href="#">Get on the Platform</a>
+            </div>
+            <div class="resource-card">
+                <img src="{{ url_for('static', filename='images/platform2.jpg') }}" alt="Hack The Box platform logo">
+                <h3>Hack The Box</h3>
+                <p>Hack The Box gives individuals, businesses and universities the tools they need to continuously improve their cybersecurity capabilities — all in one place. HackTheBox is a platform that delivers real-world cyber-security training.</p>
+                <a href="#">Get on the Platform</a>
+            </div>
+            <div class="resource-card">
+                <img src="{{ url_for('static', filename='images/platform3.jpg') }}" alt="TryHackMe platform logo">
+                <h3>TryHackMe</h3>
+                <p>TryHackMe is a free online platform to learn cyber security through hands-on labs and exercises, accessible entirely in your browser—perfect for all skill levels.</p>
+                <a href="#">Get on the Platform</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Well-Known PDFs Section -->
+<section class="section">
+    <div class="container">
+        <h2>Well-Known PDFs</h2>
+        <div class="resources-grid">
+            <div class="resource-card">
+                <img src="{{ url_for('static', filename='images/cover1.jpg') }}" alt="cover1 thumbnail">
+                <h3>Linux Commands by Bobby Iliev</h3>
+                <p>A PDF with insights into Linux commands.</p>
+                <a href="{{ url_for('static', filename='pdf/cybersecurity_guide.pdf') }}" download> Download</a>
+            </div>
+            <div class="resource-card">
+                <img src="{{ url_for('static', filename='images/cover4.jpg') }}" alt="Cybersecurity thumbnail">
+                <h3>Cybersecurity by Dr. VK Saraswat</h3>
+                <p>A comprehensive PDF guide offering essential cybersecurity awareness tips and best practices specifically tailored for smart technology users.</p>
+                <a href="{{ url_for('static', filename='pdf/CyberSecurity_Guide.pdf') }}" download> Download</a>
+            </div>
+            <div class="resource-card">
+                <img src="{{ url_for('static', filename='images/cover3.png') }}" alt="Network Basics for Hackers thumbnail">
+                <h3>Network Basics for Hackers</h3>
+                <p>A beginner-friendly PDF resource that introduces the fundamentals of computer networking, designed to help newcomers build a strong foundation.</p>
+                <a href="{{ url_for('static', filename='pdf/Network Basics for Hackers.pdf') }}" download> Download</a>
+            </div>
+        </div>
+    </div>
+</section> 
+{% endblock %}
+
+{% block extra_js %}
+<!-- No JavaScript needed for this static page -->
+{% endblock %}

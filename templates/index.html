@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}CyberGanj - Your Guide to Cybersecurity Awareness{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Welcome to <span class="cyber">Cyber</span><span class="ganj">Ganj</span></h1>
+            <p class="hero-tagline">Your trusted resource for cybersecurity awareness and education</p>
+            <p class="hero-subtitle">Learn to protect yourself, your data, and your digital identity</p>
+            <div class="hero-buttons">
+                <a href="{{ url_for('awareness') }}" class="btn btn-primary">Learn Cybersecurity</a>
+                <a href="{{ url_for('tools') }}" class="btn btn-secondary">Try Our Tools</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <div class="container">
+        <h2 class="section-title">What We Offer</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Cyber Hygiene</h3>
+                <p>Learn essential practices to maintain your digital health and security online.</p>
+                <a href="{{ url_for('awareness') }}#cyber-hygiene" class="feature-link">Learn More</a>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-user-secret"></i>
+                </div>
+                <h3>Threat Awareness</h3>
+                <p>Stay informed about common cyber threats and how to protect against them.</p>
+                <a href="{{ url_for('awareness') }}#threat-awareness" class="feature-link">Learn More</a>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-key"></i>
+                </div>
+                <h3>Password Security</h3>
+                <p>Create strong passwords and learn best practices for credential management.</p>
+                <a href="{{ url_for('tools') }}#password-checker" class="feature-link">Try Our Tool</a>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h3>Educational Resources</h3>
+                <p>Access curated learning materials to enhance your cybersecurity knowledge.</p>
+                <a href="{{ url_for('resources') }}" class="feature-link">Explore Resources</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="latest-articles">
+    <div class="container">
+        <h2 class="section-title">Latest Awareness Articles</h2>
+        <div class="articles-grid">
+            <div class="article-card">
+                <div class="article-image">
+                    <img src="{{ url_for('static', filename='images/phishing.jpg') }}" alt="Phishing attacks graphic">
+                </div>
+                <div class="article-content">
+                    <h3>Recognizing Phishing Attempts</h3>
+                    <p>Learn how to identify suspicious emails and protect yourself from phishing attacks.</p>
+                    <a href="{{ url_for('awareness') }}#phishing" class="article-link">Read More</a>
+                </div>
+            </div>
+            <div class="article-card">
+                <div class="article-image">
+                    <img src="{{ url_for('static', filename='images/privacy.jpg') }}" alt="Online privacy graphic">
+                </div>
+                <div class="article-content">
+                    <h3>Protecting Your Online Privacy</h3>
+                    <p>Tips and tools to safeguard your personal information in the digital landscape.</p>
+                    <a href="{{ url_for('awareness') }}#privacy" class="article-link">Read More</a>
+                </div>
+            </div>
+            <div class="article-card">
+                <div class="article-image">
+                    <img src="{{ url_for('static', filename='images/ransomware.jpg') }}" alt="Ransomware attack graphic">
+                </div>
+                <div class="article-content">
+                    <h3>Understanding Ransomware</h3>
+                    <p>What ransomware is, how it spreads, and steps to prevent becoming a victim.</p>
+                    <a href="{{ url_for('awareness') }}#ransomware" class="article-link">Read More</a>
+                </div>
+            </div>
+        </div>
+        <div class="view-all-container">
+            <a href="{{ url_for('awareness') }}" class="btn btn-outline">View All Articles</a>
+        </div>
+    </div>
+</section>
+
+<section class="cta">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Stay Safe in the Digital World</h2>
+            <p>Knowledge is your best defense against cyber threats. Explore our tools and resources to enhance your cybersecurity awareness.</p>
+            <a href="{{ url_for('tools') }}" class="btn btn-primary">Explore Tools</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

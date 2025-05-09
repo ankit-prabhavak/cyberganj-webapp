@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block title %}FRUIT - Login{% endblock %}
+
+{% block extra_css %}
+<style>
+    .login-page {
+        font-family: var(--font-primary);
+        background:linear-gradient(135deg, #2c3e50 0%, #1a2530 30%, #89c5ed 0%, #b9d6e9 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        animation: fadeIn 2s ease-in-out;
+        padding: 4rem 2rem;
+    }
+
+    .login-box {
+        background-color: var(--light-color);
+        padding: 3rem 3rem;
+        border-radius: var(--border-radius-xl);
+        box-shadow: var(--shadow-md);
+        width: 100%;
+        max-width: 500px;
+        text-align: center;
+        animation: containerFadeIn 1s forwards;
+    }
+
+    .login-box h1 {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin-bottom: 2rem;
+    }
+
+    .login-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .login-form label {
+        text-align: left;
+        font-weight: bold;
+        color: var(--dark-color);
+    }
+
+    .login-form input[type="text"],
+    .login-form input[type="password"] {
+        padding: 0.9rem;
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--gray-medium);
+        font-size: 1rem;
+    }
+
+    .login-form button {
+        padding: 0.85rem;
+        background-color: var(--secondary-color);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius-md);
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .login-form button:hover {
+        background-color: var(--secondary-dark);
+    }
+
+    .toggle-login-btn {
+        margin-bottom: 1rem;
+        background-color: var(--accent-color);
+        color: white;
+        border-radius: var(--border-radius-md);
+        padding: 0.75rem;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .toggle-login-btn:hover {
+        background-color: var(--accent-dark);
+    }
+
+    .login-extra a {
+        display: inline-block;
+        margin-top: 1rem;
+        color: var(--primary-color);
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .login-extra a:hover {
+        text-decoration: underline;
+    }
+
+    video {
+        margin-top: 1rem;
+        border-radius: var(--border-radius-sm);
+        box-shadow: var(--shadow-sm);
+    }
+
+    canvas {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-page">
+    <div class="login-box">
+        <h1>Login</h1>
+
+        <button class="toggle-login-btn" onclick="toggleLoginMode()">Login via Face</button>
+
+        <!-- Credential Login Form -->
+        <form action="{{ url_for('login') }}" method="POST" id="credential_login_form" class="login-form">
+            <input type="hidden" name="next" value="{{ request.args.get('next') }}">
+            <div>
+                <label for="username">Username:</label>
+                <input type="text" name="username" placeholder="Enter your username" required>
+            </div>
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit">Login with Credentials</button>
+        </form>
+
+        <!-- Face Login Form -->
+        <form action="{{ url_for('login') }}" method="POST" id="face_login_form" class="login-form" style="display: none;">
+            <input type="hidden" name="next" value="{{ request.args.get('next') }}">
+            <button type="button" onclick="startCamera()">Start Camera</button>
+            <video id="video" width="320" height="240" autoplay></video>
+            <canvas id="canvas" width="320" height="240"></canvas>
+            <button type="button" onclick="captureImage()">Capture Image for Face Login</button>
+            <input type="hidden" id="image_data" name="image_data">
+        </form>
+
+        <div class="login-extra">
+            <a href="{{ url_for('register') }}">Don't have an account? Register</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleLoginMode() {
+        const credForm = document.getElementById('credential_login_form');
+        const faceForm = document.getElementById('face_login_form');
+        credForm.style.display = credForm.style.display === 'none' ? 'block' : 'none';
+        faceForm.style.display = faceForm.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function startCamera() {
+        const video = document.getElementById('video');
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(() => alert("Could not access webcam"));
+    }
+
+    function captureImage() {
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const dataURL = canvas.toDataURL('image/png');
+        document.getElementById('image_data').value = dataURL;
+
+        if (dataURL) {
+            const stream = video.srcObject;
+            stream.getTracks().forEach(track => track.stop());
+            document.getElementById('face_login_form').submit();
+        } else {
+            alert("No image captured. Please try again.");
+        }
+    }
+</script>
+{% endblock %}
