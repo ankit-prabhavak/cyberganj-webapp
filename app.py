@@ -308,7 +308,7 @@ def check_password():
         'feedback': feedback
     })
 
-if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()  # Create tables
-    app.run(debug=Config.DEBUG)
+# if __name__ == '__main__':
+#     with app.app_context():
+#         db.create_all()  # Create tables
+#     app.run(debug=Config.DEBUG)
