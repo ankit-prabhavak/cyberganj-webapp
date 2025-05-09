@@ -33,7 +33,7 @@
 
 1. Clone the repository:
    ```bash []
-   git clone https://github.com/ankit-prabhavak/cyberganj.git
+   git clone https://github.com/ankit-prabhavak/CyberGanj.git
    cd cyberganj
    ```
 
