@@ -308,7 +308,13 @@ def check_password():
         'feedback': feedback
     })
 
+# if __name__ == '__main__':
+#     with app.app_context():
+#         db.create_all()  # Create tables
+#     app.run(host='0.0.0.0', debug=Config.DEBUG)
+
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()  # Create tables
-    app.run(host='0.0.0.0', debug=Config.DEBUG)
+        db.create_all()  # Create tables if they don't exist
+    # For local development only, use app.run
+    # app.run(host='0.0.0.0', debug=Config.DEBUG)  # Remove or comment this line for production
