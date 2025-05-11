@@ -234,6 +234,41 @@
     border-radius: var(--border-radius-md);
     box-shadow: var(--shadow-sm);
 }
+    @media (max-width: 768px) {
+    .register-container .inner-container {
+        width: 90%; /* Allow smaller containers on mobile */
+        padding: var(--space-lg); /* Reduce padding */
+    }
+
+    .register-container .form-content {
+        flex-direction: column; /* Stack form left & right vertically */
+        gap: var(--space-md);
+    }
+
+    .register-container .video-container {
+        width: 100%; /* Ensure video section spans full width */
+    }
+
+    .register-container video,
+    .register-container canvas {
+        width: 100%;
+        height: auto;
+    }
+
+    .register-container .button-group {
+        flex-direction: column; /* Stack buttons vertically */
+        width: 100%;
+    }
+
+    .register-container .button-group .button {
+        width: 100%; /* Make buttons full width on mobile */
+    }
+
+    .register-container h1 {
+        font-size: 1.6rem; /* Slightly smaller heading */
+    }
+}
+
 </style>
 {% endblock %}
 
