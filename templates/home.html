@@ -48,16 +48,16 @@
     --accent-color: #e74c3c;
  */
  .home-container {
-     font-family: var(--font-primary);
-     background:linear-gradient(135deg, #2c3e50 0%, #1a2530 30%, #89c5ed 0%, #b9d6e9 100%); /* Softer off-white background for less eye strain */
-     /* Optional subtle gradient: background: linear-gradient(to bottom, #f8f9fa, #e8ecef); */
-     display: flex;
-     justify-content: center;
-     align-items: center;
-     min-height: 100vh;
-     color: var(--dark-color);
-     animation: fadeIn 2s ease-in-out;
- }
+    font-family: var(--font-primary);
+    background: linear-gradient(135deg, #2c3e50 0%, #1a2530 30%, #89c5ed 0%, #b9d6e9 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--dark-color);
+    animation: fadeIn 2s ease-in-out;
+    padding: 4rem 2rem; /* Match the padding from login page */
+}
  
  /* Animation for background fade-in */
  @keyframes fadeIn {
@@ -101,21 +101,22 @@
  }
  
  .home-container .inner-container {
-     background-color: var(--light-color);
-     padding: var(--space-xl); /* Increased padding */
-     width: 450px;
-     box-shadow: var(--shadow-md);
-     text-align: center;
-     border-radius: var(--border-radius-md);
-     display: flex;
-     flex-direction: column;
-     align-items: center;
-     transition: transform var(--transition-medium), box-shadow var(--transition-medium);
-     opacity: 0;
-     animation: containerFadeIn 1s forwards;
-     position: relative;
-     z-index: 10;
- }
+    background-color: var(--light-color);
+    padding: 3rem; /* Match padding from login box */
+    width: 100%;
+    max-width: 500px; /* Match max-width of login box */
+    box-shadow: var(--shadow-md);
+    text-align: center;
+    border-radius: var(--border-radius-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform var(--transition-medium), box-shadow var(--transition-medium);
+    opacity: 0;
+    animation: containerFadeIn 1s forwards;
+    position: relative;
+    z-index: 10;
+}
  
  .home-container .inner-container:hover {
      transform: translateY(-6px);
