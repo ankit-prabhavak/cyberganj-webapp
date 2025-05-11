@@ -41,6 +41,14 @@
     html {
         font-size: 14px;
     }
+
+    .header,
+    .navbar,
+    .container {
+        overflow: visible;
+        position: relative;
+     }
+
     
     /* Navigation mobile styling */
     .nav-toggle-label {
