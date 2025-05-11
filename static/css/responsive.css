@@ -165,6 +165,68 @@
         justify-content: center;
     }
 }
+/* Mobile-first responsive design */
+
+/* Logo styling */
+.home-container .logo {
+    width: 120px;
+    height: 120px;
+}
+
+/* Inner container styling */
+.home-container .inner-container {
+    background-color: var(--light-color);
+    padding: var(--space-lg); /* Adjust padding */
+    width: 90%; /* Make it responsive */
+    max-width: 450px; /* Prevent it from getting too large */
+}
+
+/* Heading styling */
+.home-container h1 {
+    font-size: 1.5rem;
+}
+
+/* Button styling */
+.home-container .button {
+    padding: 0.8rem 1.8rem; /* Adjust padding */
+}
+
+/* Larger screens (Tablets, Desktops) */
+@media (min-width: 600px) {
+    .home-container .logo {
+        width: 150px;
+        height: 150px;
+    }
+
+    .home-container .inner-container {
+        padding: var(--space-xl); /* More padding for larger screens */
+        width: 450px;
+    }
+
+    .home-container h1 {
+        font-size: 1.8rem; /* Bigger font size */
+    }
+
+    .home-container .button {
+        padding: 1rem 2rem; /* Increased padding */
+    }
+}
+
+/* Large screens (Desktops) */
+@media (min-width: 1024px) {
+    .home-container .inner-container {
+        width: 450px; /* Fixed width on large screens */
+    }
+
+    .home-container h1 {
+        font-size: 2rem; /* Larger heading on big screens */
+    }
+
+    .home-container .button {
+        padding: 1.2rem 2.5rem; /* Even larger button */
+    }
+}
+
 
 /* Responsive styles for Register Page (FRUIT) */
 
