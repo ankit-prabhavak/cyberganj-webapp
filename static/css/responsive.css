@@ -165,3 +165,45 @@
         justify-content: center;
     }
 }
+
+/* Responsive styles for Register Page (FRUIT) */
+
+@media (max-width: 768px) {
+    .register-container .inner-container {
+        width: 90%;
+        padding: var(--space-lg);
+    }
+
+    .register-container h1 {
+        font-size: 1.5rem;
+    }
+
+    .register-container .form-content {
+        flex-direction: column;
+        gap: var(--space-md);
+    }
+
+    .register-container .form-left,
+    .register-container .form-right {
+        width: 100%;
+    }
+
+    .register-container video,
+    .register-container canvas {
+        width: 100%;
+        height: auto;
+    }
+
+    .register-container .button-group {
+        flex-direction: column;
+    }
+
+    .register-container .button-group .button {
+        width: 100%;
+    }
+
+    .register-container .button {
+        font-size: 0.95rem;
+    }
+}
+
