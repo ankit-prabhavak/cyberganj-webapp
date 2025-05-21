@@ -32,8 +32,8 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
     name = db.Column(db.String(100), nullable=False)
-    branch = db.Column(db.String(100), nullable=False)
-    roll_number = db.Column(db.String(50), nullable=False)
+    Email = db.Column(db.String(100), nullable=False)
+    phone_number = db.Column(db.String(50), nullable=False)
     address = db.Column(db.String(200), nullable=False)
     image_path = db.Column(db.String(200), nullable=True)
     last_login = db.Column(db.DateTime, nullable=True)
@@ -68,6 +68,16 @@ def index():
 def awareness():
     """Render the cybersecurity awareness articles page."""
     return render_template('awareness.html')
+
+@app.route('/terms')
+def terms():
+    """Render the terms and conditions page."""
+    return "Terms and conditions page (To be implemented)"
+
+@app.route('/privacy')
+def privacy():
+    """Render the privacy policy page."""
+    return "Privacy Policy page (To be implemented)"
 
 @app.route('/phishing_attacks')
 def phishing_attacks():
@@ -111,8 +121,8 @@ def register():
         username = request.form['username']
         password = request.form['password']
         name = request.form['name']
-        branch = request.form['branch']
-        roll_number = request.form['roll_number']
+        Email = request.form['Email']
+        phone_number = request.form['phone_number']
         address = request.form['address']
         image_data = request.form['image_data']
 
@@ -132,8 +142,8 @@ def register():
                 username=username,
                 password=password,
                 name=name,
-                branch=branch,
-                roll_number=roll_number,
+                Email=Email,
+                phone_number=phone_number,
                 address=address,
                 image_path=filepath
             )
