@@ -25,8 +25,6 @@ app.config['UPLOAD_FOLDER'] = 'static/images/'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg'}
 
 db = SQLAlchemy(app)
-from flask_migrate import Migrate
-migrate = Migrate(app, db)
 
 
 # User model
