@@ -1,4 +1,4 @@
-# CYBER GANJ
+# Cyber Ganj
 
 ## Overview
 
