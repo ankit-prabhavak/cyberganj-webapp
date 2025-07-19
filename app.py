@@ -2,13 +2,14 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for, s
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import os
-import face_recognition
+import cv2
 import numpy as np
 from werkzeug.utils import secure_filename
 import base64
 from io import BytesIO
 from PIL import Image
-from scipy.spatial.distance import cosine
+import mediapipe as mp
+from scipy.spatial.distance import cosine, euclidean
 import re
 from config import Config
 from datetime import datetime
@@ -27,6 +28,126 @@ db = SQLAlchemy(app)
 app.config['UPLOAD_FOLDER'] = 'static/images/'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg'}
 
+# Initialize MediaPipe Face Mesh for face landmarks
+mp_face_mesh = mp.solutions.face_mesh
+mp_drawing = mp.solutions.drawing_utils
+
+class FaceRecognizer:
+    def __init__(self):
+        self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+        self.face_mesh = mp_face_mesh.FaceMesh(
+            static_image_mode=True,
+            max_num_faces=1,
+            refine_landmarks=True,
+            min_detection_confidence=0.5
+        )
+    
+    def extract_face_encoding(self, image_path_or_array):
+        """Extract face encoding using OpenCV and MediaPipe with improved stability"""
+        try:
+            # Load image
+            if isinstance(image_path_or_array, str):
+                image = cv2.imread(image_path_or_array)
+            elif isinstance(image_path_or_array, np.ndarray):
+                image = image_path_or_array
+            else:
+                # Handle PIL Image or BytesIO
+                if hasattr(image_path_or_array, 'read'):
+                    image_path_or_array.seek(0)
+                    image_array = np.frombuffer(image_path_or_array.read(), np.uint8)
+                    image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
+                else:
+                    image_array = np.array(image_path_or_array)
+                    if len(image_array.shape) == 3 and image_array.shape[2] == 3:
+                        image = cv2.cvtColor(image_array, cv2.COLOR_RGB2BGR)
+                    else:
+                        image = image_array
+            
+            if image is None:
+                return None
+            
+            # Resize image for consistent processing
+            height, width = image.shape[:2]
+            if width > 640:
+                scale = 640 / width
+                new_width = 640
+                new_height = int(height * scale)
+                image = cv2.resize(image, (new_width, new_height))
+            
+            # Convert BGR to RGB for MediaPipe
+            rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            
+            # Get face landmarks using MediaPipe
+            results = self.face_mesh.process(rgb_image)
+            
+            if not results.multi_face_landmarks:
+                return None
+            
+            # Extract landmarks for the first face
+            face_landmarks = results.multi_face_landmarks[0]
+            
+            # Use only key facial landmarks for better consistency
+            # Focus on eye corners, nose tip, mouth corners, and jawline points
+            key_landmark_indices = [
+                # Left eye corners
+                33, 7, 163, 144, 145, 153, 154, 155, 133, 173, 157, 158, 159, 160, 161, 246,
+                # Right eye corners  
+                362, 398, 384, 385, 386, 387, 388, 466, 263, 249, 390, 373, 374, 380, 381, 382,
+                # Nose
+                1, 2, 5, 4, 6, 19, 20, 94, 125, 141, 235, 236, 3, 51, 48, 115, 131, 134, 102, 49, 220, 305, 292, 345, 346, 347,
+                # Mouth
+                61, 84, 17, 314, 405, 320, 307, 375, 321, 308, 324, 318, 
+                # Jawline
+                172, 136, 150, 149, 176, 148, 152, 377, 400, 378, 379, 365, 397, 288, 361, 323
+            ]
+            
+            # Extract only key landmarks
+            landmarks = []
+            for i, landmark in enumerate(face_landmarks.landmark):
+                if i in key_landmark_indices:
+                    landmarks.extend([landmark.x, landmark.y, landmark.z])
+            
+            encoding = np.array(landmarks)
+            
+            # Normalize the encoding to make it more stable
+            if len(encoding) > 0:
+                encoding = (encoding - np.mean(encoding)) / (np.std(encoding) + 1e-7)
+            
+            return encoding
+            
+        except Exception as e:
+            print(f"Error in face encoding extraction: {e}")
+            return None
+    
+    def compare_faces(self, encoding1, encoding2, threshold=0.08):
+        """Compare two face encodings using cosine similarity"""
+        if encoding1 is None or encoding2 is None:
+            return False
+        
+        try:
+            # Ensure both encodings are numpy arrays
+            enc1 = np.array(encoding1)
+            enc2 = np.array(encoding2)
+            
+            # Normalize the encodings
+            enc1_norm = enc1 / np.linalg.norm(enc1)
+            enc2_norm = enc2 / np.linalg.norm(enc2)
+            
+            # Calculate cosine similarity (1 - cosine distance)
+            cosine_similarity = np.dot(enc1_norm, enc2_norm)
+            
+            # Convert to distance (lower is better)
+            cosine_distance = 1 - cosine_similarity
+            
+            print(f"Face comparison - Cosine distance: {cosine_distance:.4f}, Threshold: {threshold}")
+            
+            return cosine_distance < threshold
+        except Exception as e:
+            print(f"Error in face comparison: {e}")
+            return False
+
+# Initialize face recognizer
+face_recognizer = FaceRecognizer()
 
 # User model
 class User(UserMixin, db.Model):
@@ -97,7 +218,6 @@ def privacy():
     """Render the privacy policy page."""
     return "Privacy Policy page (To be implemented)"
 
-
 @app.route('/phishing_attacks')
 def phishing_attacks():
     """Render the phishing page."""
@@ -147,44 +267,49 @@ def register():
         image_data = request.form['image_data']  # For webcam capture
 
         if image_data:
-            # Convert base64 image data to image
-            image_data = image_data.split(',')[1]  # Remove "data:image/png;base64,"
-            image_data = base64.b64decode(image_data)
-            image = Image.open(BytesIO(image_data))
+            try:
+                # Convert base64 image data to image
+                image_data = image_data.split(',')[1]  # Remove "data:image/png;base64,"
+                image_data = base64.b64decode(image_data)
+                image = Image.open(BytesIO(image_data))
 
-            # Save image to disk
-            filename = secure_filename(f"{username}_profile.png")
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            image.save(filepath)
+                # Save image to disk
+                if not os.path.exists(app.config['UPLOAD_FOLDER']):
+                    os.makedirs(app.config['UPLOAD_FOLDER'])
+                    
+                filename = secure_filename(f"{username}_profile.png")
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                image.save(filepath)
 
-            # Process face encoding
-            image = face_recognition.load_image_file(filepath)
-            face_encoding = face_recognition.face_encodings(image)
+                # Process face encoding using our new face recognizer
+                face_encoding = face_recognizer.extract_face_encoding(filepath)
 
-            if face_encoding:
-                face_encoding = face_encoding[0]  # Get the first face encoding
-            else:
-                return "No face detected. Please try again with a clearer image."
+                if face_encoding is not None:
+                    # Check if username already exists
+                    existing_user = User.query.filter_by(username=username).first()
+                    if existing_user:
+                        return "Username already taken. Please choose a different username."
 
-            # Check if username already exists
-            existing_user = User.query.filter_by(username=username).first()
-            if existing_user:
-                return "Username already taken. Please choose a different username."
+                    # Create a new user with the face encoding
+                    new_user = User(
+                        username=username,
+                        password=password,
+                        name=name,
+                        Email=Email,
+                        phone_number=phone_number,
+                        address=address,
+                        face_encoding=face_encoding.tolist()
+                    )
+                    db.session.add(new_user)
+                    db.session.commit()
 
-            # Create a new user with the face encoding (convert to list for Pickle)
-            new_user = User(
-                username=username,
-                password=password,
-                name=name,
-                Email=Email,
-                phone_number=phone_number,
-                address=address,
-                face_encoding=face_encoding.tolist()
-            )
-            db.session.add(new_user)
-            db.session.commit()
-
-            return redirect(url_for('login'))
+                    return redirect(url_for('login'))
+                else:
+                    return "No face detected or face processing failed. Please try again with a clearer image."
+            
+            except Exception as e:
+                print(f"Registration error: {e}")
+                return "Error processing image. Please try again."
 
     return render_template('register.html')
 
@@ -209,26 +334,55 @@ def login():
         elif 'image_data' in request.form:
             image_data = request.form['image_data']
             if image_data:
-                image_data = image_data.split(',')[1]
-                image_data = base64.b64decode(image_data)
-                image = face_recognition.load_image_file(BytesIO(image_data))
-                face_encoding = face_recognition.face_encodings(image)
+                try:
+                    # Convert base64 to image data
+                    image_data = image_data.split(',')[1]
+                    image_data = base64.b64decode(image_data)
+                    
+                    # Extract face encoding from login image
+                    face_encoding = face_recognizer.extract_face_encoding(BytesIO(image_data))
 
-                if face_encoding:
-                    face_encoding = face_encoding[0]
-                    users = User.query.all()
-                    for u in users:
-                        if u.face_encoding is not None:
-                            stored_encoding = np.array(u.face_encoding)
-                            distance = cosine(stored_encoding, face_encoding)
-                            if distance < 0.06:
-                                u.last_login = datetime.now()  # Update last login
-                                db.session.commit()
-                                login_user(u)
-                                next_page = request.form.get('next') or request.args.get('next')
-                                return redirect(next_page or url_for('welcome'))
-
-                    return "User not registered or face mismatch"
+                    if face_encoding is not None:
+                        # Compare with all registered users and find the best match
+                        users = User.query.all()
+                        best_match = None
+                        best_distance = float('inf')
+                        
+                        for user in users:
+                            if user.face_encoding is not None:
+                                stored_encoding = np.array(user.face_encoding)
+                                
+                                # Calculate cosine distance
+                                enc1_norm = stored_encoding / np.linalg.norm(stored_encoding)
+                                enc2_norm = face_encoding / np.linalg.norm(face_encoding)
+                                cosine_similarity = np.dot(enc1_norm, enc2_norm)
+                                distance = 1 - cosine_similarity
+                                
+                                print(f"User: {user.username}, Distance: {distance:.4f}")
+                                
+                                # Keep track of the best match
+                                if distance < best_distance:
+                                    best_distance = distance
+                                    best_match = user
+                        
+                        # Only login if the best match is below threshold
+                        if best_match and best_distance < 0.08:
+                            best_match.last_login = datetime.now()
+                            db.session.commit()
+                            login_user(best_match)
+                            next_page = request.form.get('next') or request.args.get('next')
+                            print(f"Face login successful for user: {best_match.username} with distance: {best_distance:.4f}")
+                            return redirect(next_page or url_for('welcome'))
+                        else:
+                            if best_match:
+                                print(f"Best match {best_match.username} rejected with distance: {best_distance:.4f}")
+                            return "Face does not match any registered user or confidence too low."
+                    else:
+                        return "No face detected in the image. Please try again."
+                        
+                except Exception as e:
+                    print(f"Face login error: {e}")
+                    return "Error processing face login. Please try again."
 
         return "Invalid login method or data."
 
@@ -325,12 +479,6 @@ def check_password():
         'feedback': feedback
     })
 
-
-
-# if __name__ == '__main__':
-#     with app.app_context():
-#         db.create_all()  # Create tables
-#     app.run(host='0.0.0.0', debug=Config.DEBUG)
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()  # ✅ Creates all tables on first deployment
@@ -338,4 +486,3 @@ if __name__ == '__main__':
     # Do NOT run app.run() here on Render
     # Comment or delete this line after tables are created
     # app.run(host='0.0.0.0', debug=Config.DEBUG)
-
