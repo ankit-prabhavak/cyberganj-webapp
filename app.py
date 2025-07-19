@@ -17,10 +17,7 @@ from datetime import datetime
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# Database setup
-basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(basedir, 'instance', 'users.db')}"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# Database setup - uses Config settings (PostgreSQL or SQLite)
 db = SQLAlchemy(app)
 
 # Configure image upload folder
@@ -163,21 +160,24 @@ class FaceRecognizer:
 # Initialize face recognizer
 face_recognizer = FaceRecognizer()
 
-# User model
+# User model - Updated for PostgreSQL compatibility
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(100), nullable=False)
+    password = db.Column(db.String(255), nullable=False)  # Increased length for PostgreSQL
     name = db.Column(db.String(100), nullable=False)
     Email = db.Column(db.String(100), nullable=False)
     phone_number = db.Column(db.String(50), nullable=False)
-    address = db.Column(db.String(200), nullable=False)
-    face_encoding = db.Column(db.PickleType, nullable=True)  # Store face encoding
-    last_login = db.Column(db.DateTime, nullable=True)  # Store last login timestamp
+    address = db.Column(db.Text, nullable=False)  # Changed to Text for longer addresses
+    face_encoding = db.Column(db.JSON, nullable=True)  # Use JSON instead of PickleType for PostgreSQL
+    last_login = db.Column(db.DateTime, nullable=True)
+    
+    def __repr__(self):
+        return f'<User {self.username}>'
 
 # Initialize Login Manager
 login_manager = LoginManager(app)
-login_manager.login_view = "login"  # Redirect to login page if not logged in
+login_manager.login_view = "login"
 
 # User Loader for Flask-Login
 @login_manager.user_loader
@@ -191,13 +191,10 @@ def allowed_file(filename):
 # Custom placeholder filter
 @app.template_filter('placeholder')
 def placeholder_filter(value):
-    """
-    Custom Jinja2 filter to handle placeholders.
-    Returns the input value if valid, otherwise a default placeholder.
-    """
+    """Custom Jinja2 filter to handle placeholders."""
     if value and value != '':
         return value
-    if isinstance(value, str) and '2025-05' in value:  # For datetime placeholders
+    if isinstance(value, str) and '2025-05' in value:
         return datetime.now().strftime('%Y-%m-%d %I:%M %p')
     return 'Not available'
 
@@ -205,6 +202,16 @@ def placeholder_filter(value):
 @app.context_processor
 def inject_now():
     return {'now': datetime.now}
+
+# Database initialization route (temporary - remove after first deployment)
+@app.route('/init-db')
+def init_db():
+    """Initialize database tables - Remove this route after first deployment"""
+    try:
+        db.create_all()
+        return "Database tables created successfully!"
+    except Exception as e:
+        return f"Error creating tables: {str(e)}"
 
 # Routes
 @app.route('/')
@@ -272,18 +279,18 @@ def home():
 def register():
     """Handle user registration with face encoding."""
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        name = request.form['name']
-        Email = request.form['Email']
-        phone_number = request.form['phone_number']
-        address = request.form['address']
-        image_data = request.form['image_data']  # For webcam capture
+        try:
+            username = request.form['username']
+            password = request.form['password']
+            name = request.form['name']
+            Email = request.form['Email']
+            phone_number = request.form['phone_number']
+            address = request.form['address']
+            image_data = request.form['image_data']
 
-        if image_data:
-            try:
+            if image_data:
                 # Convert base64 image data to image
-                image_data = image_data.split(',')[1]  # Remove "data:image/png;base64,"
+                image_data = image_data.split(',')[1]
                 image_data = base64.b64decode(image_data)
                 image = Image.open(BytesIO(image_data))
 
@@ -295,7 +302,7 @@ def register():
                 filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                 image.save(filepath)
 
-                # Process face encoding using our new face recognizer
+                # Process face encoding
                 face_encoding = face_recognizer.extract_face_encoding(filepath)
 
                 if face_encoding is not None:
@@ -312,7 +319,7 @@ def register():
                         Email=Email,
                         phone_number=phone_number,
                         address=address,
-                        face_encoding=face_encoding.tolist()
+                        face_encoding=face_encoding.tolist() if face_encoding is not None else None
                     )
                     db.session.add(new_user)
                     db.session.commit()
@@ -320,10 +327,11 @@ def register():
                     return redirect(url_for('login'))
                 else:
                     return "No face detected or face processing failed. Please try again with a clearer image."
-            
-            except Exception as e:
-                print(f"Registration error: {e}")
-                return "Error processing image. Please try again."
+                    
+        except Exception as e:
+            print(f"Registration error: {e}")
+            db.session.rollback()
+            return "Error processing registration. Please try again."
 
     return render_template('register.html')
 
@@ -334,21 +342,21 @@ def login():
         return redirect(url_for('welcome'))
 
     if request.method == 'POST':
-        if 'username' in request.form and 'password' in request.form:
-            username = request.form['username']
-            password = request.form['password']
-            user = User.query.filter_by(username=username).first()
-            if user and user.password == password:
-                user.last_login = datetime.now()  # Update last login
-                db.session.commit()
-                login_user(user)
-                next_page = request.form.get('next') or request.args.get('next')
-                return redirect(next_page or url_for('welcome'))
+        try:
+            if 'username' in request.form and 'password' in request.form:
+                username = request.form['username']
+                password = request.form['password']
+                user = User.query.filter_by(username=username).first()
+                if user and user.password == password:
+                    user.last_login = datetime.now()
+                    db.session.commit()
+                    login_user(user)
+                    next_page = request.form.get('next') or request.args.get('next')
+                    return redirect(next_page or url_for('welcome'))
 
-        elif 'image_data' in request.form:
-            image_data = request.form['image_data']
-            if image_data:
-                try:
+            elif 'image_data' in request.form:
+                image_data = request.form['image_data']
+                if image_data:
                     # Convert base64 to image data
                     image_data = image_data.split(',')[1]
                     image_data = base64.b64decode(image_data)
@@ -357,7 +365,7 @@ def login():
                     face_encoding = face_recognizer.extract_face_encoding(BytesIO(image_data))
 
                     if face_encoding is not None:
-                        # Compare with all registered users and find the best match
+                        # Compare with all registered users
                         users = User.query.all()
                         best_match = None
                         best_distance = float('inf')
@@ -374,12 +382,11 @@ def login():
                                 
                                 print(f"User: {user.username}, Distance: {distance:.4f}")
                                 
-                                # Keep track of the best match
                                 if distance < best_distance:
                                     best_distance = distance
                                     best_match = user
                         
-                        # Only login if the best match is below threshold
+                        # Login if best match is below threshold
                         if best_match and best_distance < 0.25:
                             best_match.last_login = datetime.now()
                             db.session.commit()
@@ -394,11 +401,11 @@ def login():
                     else:
                         return "No face detected in the image. Please try again."
                         
-                except Exception as e:
-                    print(f"Face login error: {e}")
-                    return "Error processing face login. Please try again."
+        except Exception as e:
+            print(f"Login error: {e}")
+            return "Error processing login. Please try again."
 
-        return "Invalid login method or data."
+        return "Invalid login credentials."
 
     return render_template('login.html')
 
@@ -468,7 +475,7 @@ def check_password():
     else:
         score += 1
     
-    # Check for common passwords (simplified)
+    # Check for common passwords
     common_passwords = ['password', '123456', 'qwerty', 'admin', 'welcome']
     if password.lower() in common_passwords:
         score = 0
@@ -493,10 +500,21 @@ def check_password():
         'feedback': feedback
     })
 
+# Initialize database tables
+@app.before_first_request
+def create_tables():
+    """Create database tables before first request"""
+    try:
+        db.create_all()
+        print("Database tables created successfully!")
+    except Exception as e:
+        print(f"Error creating tables: {e}")
+
+# For development only
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()  # ✅ Creates all tables on first deployment
-
-    # Do NOT run app.run() here on Render
-    # Comment or delete this line after tables are created
-    # app.run(host='0.0.0.0', debug=Config.DEBUG)
+        db.create_all()
+    
+    # Only run locally, not on Render
+    if not os.environ.get('DATABASE_URL'):
+        app.run(host='0.0.0.0', debug=Config.DEBUG)

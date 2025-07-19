@@ -1,6 +1,0 @@
-services:
-  - type: web
-    name: cyberganj
-    env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app  # or use `yourmodule:create_app()` if using factory
