@@ -500,21 +500,16 @@ def check_password():
         'feedback': feedback
     })
 
-# Initialize database tables
-@app.before_first_request
-def create_tables():
-    """Create database tables before first request"""
+# Initialize database tables when app starts
+with app.app_context():
     try:
         db.create_all()
         print("Database tables created successfully!")
     except Exception as e:
         print(f"Error creating tables: {e}")
 
-# For development only
+# For development and production
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-    
-    # Only run locally, not on Render
-    if not os.environ.get('DATABASE_URL'):
-        app.run(host='0.0.0.0', debug=Config.DEBUG)
+    # Run on all interfaces for Render deployment
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=Config.DEBUG)
