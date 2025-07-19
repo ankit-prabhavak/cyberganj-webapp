@@ -499,4 +499,4 @@ if __name__ == '__main__':
 
     # Do NOT run app.run() here on Render
     # Comment or delete this line after tables are created
-    app.run(host='0.0.0.0', debug=Config.DEBUG)
+    # app.run(host='0.0.0.0', debug=Config.DEBUG)
