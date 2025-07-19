@@ -260,10 +260,12 @@ def tools():
     return render_template('tools.html')
 
 @app.route('/resources')
-@login_required
 def resources():
-    """Render the resources page."""
-    return render_template('resources.html', user=current_user)
+    """Render the resources page with login check."""
+    if current_user.is_authenticated:
+        return render_template('resources.html', user=current_user, show_overlay=False)
+    else:
+        return render_template('resources.html', show_overlay=True)
 
 @app.route('/about')
 def about():
