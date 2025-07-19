@@ -8,7 +8,6 @@ from werkzeug.utils import secure_filename
 import base64
 from io import BytesIO
 from PIL import Image
-import mediapipe as mp
 from scipy.spatial.distance import cosine, euclidean
 import re
 from config import Config
@@ -28,22 +27,14 @@ db = SQLAlchemy(app)
 app.config['UPLOAD_FOLDER'] = 'static/images/'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg'}
 
-# Initialize MediaPipe Face Mesh for face landmarks
-mp_face_mesh = mp.solutions.face_mesh
-mp_drawing = mp.solutions.drawing_utils
-
 class FaceRecognizer:
     def __init__(self):
+        # Initialize OpenCV face detector and recognizer
         self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-        self.face_mesh = mp_face_mesh.FaceMesh(
-            static_image_mode=True,
-            max_num_faces=1,
-            refine_landmarks=True,
-            min_detection_confidence=0.5
-        )
-    
+        self.recognizer = cv2.face.LBPHFaceRecognizer_create()
+        
     def extract_face_encoding(self, image_path_or_array):
-        """Extract face encoding using OpenCV and MediaPipe with improved stability"""
+        """Extract face encoding using OpenCV's LBPH feature extraction"""
         try:
             # Load image
             if isinstance(image_path_or_array, str):
@@ -66,60 +57,83 @@ class FaceRecognizer:
             if image is None:
                 return None
             
-            # Resize image for consistent processing
-            height, width = image.shape[:2]
-            if width > 640:
-                scale = 640 / width
-                new_width = 640
-                new_height = int(height * scale)
-                image = cv2.resize(image, (new_width, new_height))
+            # Convert to grayscale
+            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             
-            # Convert BGR to RGB for MediaPipe
-            rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            # Detect faces
+            faces = self.face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
             
-            # Get face landmarks using MediaPipe
-            results = self.face_mesh.process(rgb_image)
-            
-            if not results.multi_face_landmarks:
+            if len(faces) == 0:
                 return None
             
-            # Extract landmarks for the first face
-            face_landmarks = results.multi_face_landmarks[0]
+            # Get the largest face
+            face = max(faces, key=lambda rect: rect[2] * rect[3])
+            x, y, w, h = face
             
-            # Use only key facial landmarks for better consistency
-            # Focus on eye corners, nose tip, mouth corners, and jawline points
-            key_landmark_indices = [
-                # Left eye corners
-                33, 7, 163, 144, 145, 153, 154, 155, 133, 173, 157, 158, 159, 160, 161, 246,
-                # Right eye corners  
-                362, 398, 384, 385, 386, 387, 388, 466, 263, 249, 390, 373, 374, 380, 381, 382,
-                # Nose
-                1, 2, 5, 4, 6, 19, 20, 94, 125, 141, 235, 236, 3, 51, 48, 115, 131, 134, 102, 49, 220, 305, 292, 345, 346, 347,
-                # Mouth
-                61, 84, 17, 314, 405, 320, 307, 375, 321, 308, 324, 318, 
-                # Jawline
-                172, 136, 150, 149, 176, 148, 152, 377, 400, 378, 379, 365, 397, 288, 361, 323
-            ]
+            # Extract face region
+            face_gray = gray[y:y+h, x:x+w]
             
-            # Extract only key landmarks
-            landmarks = []
-            for i, landmark in enumerate(face_landmarks.landmark):
-                if i in key_landmark_indices:
-                    landmarks.extend([landmark.x, landmark.y, landmark.z])
+            # Resize to standard size for consistency
+            face_resized = cv2.resize(face_gray, (100, 100))
             
-            encoding = np.array(landmarks)
+            # Create a simple feature vector using histogram of oriented gradients
+            # and local binary patterns
+            features = []
             
-            # Normalize the encoding to make it more stable
-            if len(encoding) > 0:
-                encoding = (encoding - np.mean(encoding)) / (np.std(encoding) + 1e-7)
+            # Divide face into 4x4 grid and calculate LBP histogram for each cell
+            cell_h, cell_w = face_resized.shape[0] // 4, face_resized.shape[1] // 4
             
-            return encoding
+            for i in range(4):
+                for j in range(4):
+                    cell = face_resized[i*cell_h:(i+1)*cell_h, j*cell_w:(j+1)*cell_w]
+                    
+                    # Calculate LBP
+                    lbp = self._calculate_lbp(cell)
+                    
+                    # Calculate histogram
+                    hist, _ = np.histogram(lbp.ravel(), bins=256, range=[0, 256])
+                    features.extend(hist)
+            
+            # Add some statistical features
+            features.extend([
+                np.mean(face_resized),
+                np.std(face_resized),
+                np.median(face_resized),
+                np.var(face_resized)
+            ])
+            
+            return np.array(features, dtype=np.float32)
             
         except Exception as e:
             print(f"Error in face encoding extraction: {e}")
             return None
     
-    def compare_faces(self, encoding1, encoding2, threshold=0.08):
+    def _calculate_lbp(self, image, radius=1, n_points=8):
+        """Calculate Local Binary Pattern"""
+        def get_pixel(img, center, x, y):
+            new_x = center[0] + x
+            new_y = center[1] + y
+            if 0 <= new_x < img.shape[0] and 0 <= new_y < img.shape[1]:
+                return img[new_x, new_y]
+            else:
+                return 0
+        
+        lbp = np.zeros_like(image)
+        for i in range(radius, image.shape[0] - radius):
+            for j in range(radius, image.shape[1] - radius):
+                center = image[i, j]
+                code = 0
+                for k in range(n_points):
+                    angle = 2 * np.pi * k / n_points
+                    x = int(radius * np.cos(angle))
+                    y = int(radius * np.sin(angle))
+                    neighbor = get_pixel(image, (i, j), x, y)
+                    if neighbor >= center:
+                        code |= (1 << k)
+                lbp[i, j] = code
+        return lbp
+    
+    def compare_faces(self, encoding1, encoding2, threshold=0.25):
         """Compare two face encodings using cosine similarity"""
         if encoding1 is None or encoding2 is None:
             return False
@@ -130,8 +144,8 @@ class FaceRecognizer:
             enc2 = np.array(encoding2)
             
             # Normalize the encodings
-            enc1_norm = enc1 / np.linalg.norm(enc1)
-            enc2_norm = enc2 / np.linalg.norm(enc2)
+            enc1_norm = enc1 / (np.linalg.norm(enc1) + 1e-7)
+            enc2_norm = enc2 / (np.linalg.norm(enc2) + 1e-7)
             
             # Calculate cosine similarity (1 - cosine distance)
             cosine_similarity = np.dot(enc1_norm, enc2_norm)
@@ -353,8 +367,8 @@ def login():
                                 stored_encoding = np.array(user.face_encoding)
                                 
                                 # Calculate cosine distance
-                                enc1_norm = stored_encoding / np.linalg.norm(stored_encoding)
-                                enc2_norm = face_encoding / np.linalg.norm(face_encoding)
+                                enc1_norm = stored_encoding / (np.linalg.norm(stored_encoding) + 1e-7)
+                                enc2_norm = face_encoding / (np.linalg.norm(face_encoding) + 1e-7)
                                 cosine_similarity = np.dot(enc1_norm, enc2_norm)
                                 distance = 1 - cosine_similarity
                                 
@@ -366,7 +380,7 @@ def login():
                                     best_match = user
                         
                         # Only login if the best match is below threshold
-                        if best_match and best_distance < 0.08:
+                        if best_match and best_distance < 0.25:
                             best_match.last_login = datetime.now()
                             db.session.commit()
                             login_user(best_match)
@@ -485,4 +499,4 @@ if __name__ == '__main__':
 
     # Do NOT run app.run() here on Render
     # Comment or delete this line after tables are created
-    # app.run(host='0.0.0.0', debug=Config.DEBUG)
+    app.run(host='0.0.0.0', debug=Config.DEBUG)
