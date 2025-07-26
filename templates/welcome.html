@@ -449,8 +449,8 @@
             </div>
           </div>
           <div class="profile-image-container">
-<!--             <img src="{{ url_for('static', filename='images/' + user.username + '_profile.png') }}" alt="Profile Image" class="profile-image"> -->
-                 <img src="data:image/png;base64,{{ user.profile_image }}" alt="Profile Picture" />
+            <img src="{{ url_for('static', filename='images/' + user.username + '_profile.png') }}" alt="Profile Image" class="profile-image">
+<!--                  <img src="data:image/png;base64,{{ user.profile_image }}" alt="Profile Picture" /> -->
 
             <div class="profile-image-actions">
               <button class="image-action-btn"><i class="fas fa-upload"></i> Upload</button>
