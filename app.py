@@ -323,8 +323,9 @@ def register():
                         Email=Email,
                         phone_number=phone_number,
                         address=address,
+                        profile_image=image_data,  # Just the base64 string (without prefix)
                         face_encoding=face_encoding.tolist() if face_encoding is not None else None
-                        profile_image=image_data  # Just the base64 string (without prefix)
+                        
                     )
                     db.session.add(new_user)
                     db.session.commit()
