@@ -171,6 +171,8 @@ class User(UserMixin, db.Model):
     address = db.Column(db.Text, nullable=False)  # Changed to Text for longer addresses
     face_encoding = db.Column(db.JSON, nullable=True)  # Use JSON instead of PickleType for PostgreSQL
     last_login = db.Column(db.DateTime, nullable=True)
+    profile_image = db.Column(db.Text, nullable=True)  # base64-encoded image : the new change
+
     
     def __repr__(self):
         return f'<User {self.username}>'
@@ -322,6 +324,7 @@ def register():
                         phone_number=phone_number,
                         address=address,
                         face_encoding=face_encoding.tolist() if face_encoding is not None else None
+                        profile_image=image_data  # Just the base64 string (without prefix)
                     )
                     db.session.add(new_user)
                     db.session.commit()
