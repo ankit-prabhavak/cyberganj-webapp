@@ -6,11 +6,37 @@
 <script src="{{ url_for('static', filename='js/password.js') }}"></script>
 {% endblock %}
 
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: linear-gradient(rgba(44, 62, 80, 0.9), rgba(44, 62, 80, 0.9));
+        color: white;
+        padding: 3rem 0;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .hero-content h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .hero-content p {
+        font-size: 1.2rem;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+</style>
+
+{% endblock %}
+
 {% block content %}
-<section class="page-header">
+<section class="hero-section">
     <div class="container">
-        <h1>Interactive Security Tools</h1>
-        <p>Practical tools and resources designed to help you evaluate, enhance, and secure your digital presence, so you can confidently defend against evolving cyber threats.</p>
+        <div class="hero-content">
+            <h1>Interactive Security Tools</h1>
+            <p>Practical tools and resources designed to help you evaluate, enhance, and secure your digital presence, so you can confidently defend against evolving cyber threats.</p>
+        </div>
     </div>
 </section>
 
