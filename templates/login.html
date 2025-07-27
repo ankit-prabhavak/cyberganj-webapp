@@ -97,7 +97,7 @@
         text-decoration: underline;
     }
 
-    video {
+/*     video {
         margin-top: 1rem;
         border-radius: var(--border-radius-sm);
         box-shadow: var(--shadow-sm);
@@ -105,7 +105,19 @@
 
     canvas {
         display: none;
-    }
+    } */
+video,
+canvas {
+    margin-top: 1rem;
+    border-radius: var(--border-radius-sm);
+    box-shadow: var(--shadow-sm);
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3; /* Maintain 4:3 aspect ratio */
+    background-color: black; /* fallback if video not loaded */
+}
+
 </style>
 {% endblock %}
 
